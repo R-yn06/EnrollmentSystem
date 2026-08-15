@@ -4,7 +4,7 @@
 
 package com.mycompany.enrollmentsystem;
 
-/**hhhhhhhhh
+/**
  *
  * @author caraos
  */
@@ -20,7 +20,7 @@ public class EnrollmentSystem {
 
     Statement st;
 
-    ResultSet rs; 
+    static ResultSet rs; 
 
     public static void main(String[] args) { 
       StudentsForm a = new StudentsForm();

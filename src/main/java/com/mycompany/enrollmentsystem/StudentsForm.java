@@ -12,6 +12,12 @@ import javax.swing.table.DefaultTableModel;
  * @author Caraos
  */
 public class StudentsForm extends javax.swing.JFrame {
+String stdid;
+String sname;
+String sadd;
+String scourse;
+String sgender;
+String syrlvl;
 
     public void showRecords(){
         DefaultTableModel tblmodel = (DefaultTableModel) studTable.getModel();
@@ -87,6 +93,11 @@ public class StudentsForm extends javax.swing.JFrame {
                 "ID", "Name", "Address", "Course", "Gender", "Year Level"
             }
         ));
+        studTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                studTableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(studTable);
 
         search.setText("Search");
@@ -120,6 +131,11 @@ public class StudentsForm extends javax.swing.JFrame {
         saveBtn.addActionListener(this::saveBtnActionPerformed);
 
         editBtn.setText("Edit");
+        editBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                editBtnMouseClicked(evt);
+            }
+        });
 
         deleteBtn.setText("Delete");
         deleteBtn.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -183,9 +199,9 @@ public class StudentsForm extends javax.swing.JFrame {
                             .addComponent(studid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(studname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(studname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(studadd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -250,14 +266,51 @@ public class StudentsForm extends javax.swing.JFrame {
     }//GEN-LAST:event_studidActionPerformed
 
     private void deleteBtnMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteBtnMousePressed
-       
-//    Students c = new Students();
-//
-//    c.deleteStudent(Integer.parseInt(studid.getText()));
-//
-//    showRecords(); // Refresh the JTable
-//}
+        Students b = new Students();
+        b.delete_student(Integer.parseInt(studid.getText()));
+        showRecords();
+  
     }//GEN-LAST:event_deleteBtnMousePressed
+
+    private void studTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_studTableMouseClicked
+       int selectedRow = studTable.getSelectedRow();
+       
+       if (selectedRow < 0) return; 
+
+        stdid = (String) studTable.getValueAt(selectedRow, 0);
+        studid.setText(stdid);
+
+        sname = (String) studTable.getValueAt(selectedRow, 1);
+        studname.setText(sname);
+
+        sadd = (String) studTable.getValueAt(selectedRow, 2);
+        studadd.setText(sadd);
+
+        scourse = (String) studTable.getValueAt(selectedRow, 3);
+        studcrs.setText(scourse);
+
+        sgender = (String) studTable.getValueAt(selectedRow, 4);
+        studgender.setText(sgender);
+        
+        syrlvl = (String) studTable.getValueAt(selectedRow, 5);
+        studyrlvl.setText(syrlvl);
+    }//GEN-LAST:event_studTableMouseClicked
+
+    private void editBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtnMouseClicked
+        
+  Students c = new Students();
+  
+   c.edit_student(
+    Integer.parseInt(studid.getText()),
+    studname.getText(),
+    studadd.getText(),
+    studcrs.getText(),
+    studgender.getText(),
+    studyrlvl.getText()
+);
+   showRecords();
+             
+    }//GEN-LAST:event_editBtnMouseClicked
 
     /**
      * @param args the command line arguments

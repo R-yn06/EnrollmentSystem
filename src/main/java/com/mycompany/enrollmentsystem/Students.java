@@ -41,29 +41,40 @@ public class Students {
     }
 }
     
-//    public void deleteStudent(){
-//            EnrollmentSystem b = new EnrollmentSystem();
-//    
-//            b.DBConnect();
-//
-//    try {
-//        String query = "DELETE FROM Students WHERE studid like '%" + studname + "%'";
-//
-//        int rows = b.st.executeUpdate(query);
-//
-//        if (rows > 0) {
-//            System.out.println("Student deleted successfully!");
-//        } else {
-//            System.out.println("Student ID not found!");
-//        }
-//
-//    } catch (Exception ex) {
-//        System.out.println("Delete failed!");
-//        ex.printStackTrace();
-//    }
-//}
-//    
-//    public void updateStudent(){
-//        
-//    }
+    public void delete_student(int studid){
+        EnrollmentSystem b = new EnrollmentSystem();
+    b.DBConnect();
+    String query = "delete from students where studid ="+ studid;
+    try {
+            int rows = b.st.executeUpdate(query);
+        }
+    catch(Exception ex) {
+        System.out.println("Not successful!");
+        ex.printStackTrace();
+    }
+   
+    }
+    public void edit_student(int studid, String studname, String studadd,
+                   String studcrs, String studgender, String studyrlvl){
+    EnrollmentSystem b = new EnrollmentSystem();
+    b.DBConnect();
+    String query = "UPDATE students SET studname = ?, studadd = ?, studcrs = ?, "
+                 + "studgender = ?, studyrlvl = ? WHERE studid = ?";
+    try {
+        java.sql.PreparedStatement ps = b.con.prepareStatement(query);
+        ps.setString(1, studname);
+        ps.setString(2, studadd);
+        ps.setString(3, studcrs);
+        ps.setString(4, studgender);
+        ps.setString(5, studyrlvl);
+        ps.setInt(6, studid);
+        int rows = ps.executeUpdate();
+        if (rows > 0) {
+            System.out.println("Student updated successfully!");
+        }
+    } catch(Exception ex) {
+        System.out.println("Not successful!");
+        ex.printStackTrace();
+    }
+}
 }
