@@ -269,7 +269,7 @@ String syrlvl;
         Students b = new Students();
         b.delete_student(Integer.parseInt(studid.getText()));
         showRecords();
-  
+  //ddddddd
     }//GEN-LAST:event_deleteBtnMousePressed
 
     private void studTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_studTableMouseClicked
