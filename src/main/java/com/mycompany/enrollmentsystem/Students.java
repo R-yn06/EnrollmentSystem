@@ -54,7 +54,7 @@ public class Students {
     }
    
     }
-    public void edit_student(int studid, String studname, String studadd,
+    public void update_student(int studid, String studname, String studadd,
                    String studcrs, String studgender, String studyrlvl){
     EnrollmentSystem b = new EnrollmentSystem();
     b.DBConnect();
