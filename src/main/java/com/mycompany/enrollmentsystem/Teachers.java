@@ -11,63 +11,57 @@ package com.mycompany.enrollmentsystem;
  */
 public class Teachers {
      
- public void newteacher (int studid, String studname, String studadd,
-                       String studcrs, String studgender, String studyrlvl) {
+ public void newteacher(int tid, String tname, String tdept, String tcontact) {
 
     EnrollmentSystem b = new EnrollmentSystem();
     b.DBConnect();
 
     try {
-        String query = "INSERT INTO Students VALUES (" +
-                studid + ", '" +
-                studname + "', '" +
-                studadd + "', '" +
-                studcrs + "', '" +
-                studgender + "', '" +
-                studyrlvl + "')";
+        String query = "INSERT INTO Teachers VALUES (" +
+                tid + ", '" +
+                tname + "', '" +
+                tdept + "', '" +
+                tcontact + "')";
 
         int rows = b.st.executeUpdate(query);
 
         if (rows > 0) {
-            System.out.println("Student inserted successfully!");
+            System.out.println("Teacher Added successfully!");
         }
 
     } catch (Exception ex) {
-        System.out.println("Not successful!");
+        System.out.println("Not successful! (Teacher)");
         ex.printStackTrace();
     }
 }
     
-    public void delete_teacher(int studid){
+    public void delete_teacher(int tid){
         EnrollmentSystem b = new EnrollmentSystem();
     b.DBConnect();
-    String query = "delete from students where studid ="+ studid;
+    String query = "delete from Teachers where tid ="+ tid;
     try {
             int rows = b.st.executeUpdate(query);
         }
     catch(Exception ex) {
-        System.out.println("Not successful!");
+        System.out.println("Not successful! (Teacher)");
         ex.printStackTrace();
     }
    
     }
-    public void update_teacher(int studid, String studname, String studadd,
-                   String studcrs, String studgender, String studyrlvl){
+    public void update_Teacher(int tid, String tname, String tdept,  String tcontact){
     EnrollmentSystem b = new EnrollmentSystem();
     b.DBConnect();
-    String query = "UPDATE students SET studname = ?, studadd = ?, studcrs = ?, "
-                 + "studgender = ?, studyrlvl = ? WHERE studid = ?";
+    String query = "UPDATE teachers SET tname = ?, tdept = ?, "
+                 + "tcontact = ? WHERE tid = ?";
     try {
         java.sql.PreparedStatement ps = b.con.prepareStatement(query);
-        ps.setString(1, studname);
-        ps.setString(2, studadd);
-        ps.setString(3, studcrs);
-        ps.setString(4, studgender);
-        ps.setString(5, studyrlvl);
-        ps.setInt(6, studid);
+        ps.setString(1, tname);
+        ps.setString(2, tdept);
+        ps.setString(3, tcontact);
+        ps.setInt(4, tid);
         int rows = ps.executeUpdate();
         if (rows > 0) {
-            System.out.println("Student updated successfully!");
+            System.out.println("Teacher updated successfully!");
         }
     } catch(Exception ex) {
         System.out.println("Not successful!");

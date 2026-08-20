@@ -4,12 +4,47 @@
  */
 package com.mycompany.enrollmentsystem;
 
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author rcaraos
  */
 public class SubjectsForm extends javax.swing.JFrame {
+    String subid;
+    String subcode;
+    String subdesc;
+    String subunits;
+    String subsched;
     
+public void showRecords(){
+        DefaultTableModel tblmodel = (DefaultTableModel) subTable.getModel();
+        tblmodel.setRowCount(0);
+        
+        EnrollmentSystem b = new EnrollmentSystem();
+        b.DBConnect();
+        
+        try{
+            String query = "select * from Subjects where concat(subjid, subjcode, subjdesc, subjunits, subjsched) like '%" + search1.getText() + "%'";
+            b.rs = b.st.executeQuery(query);
+            System.out.println("Success with sql!");  
+            
+            while (b.rs.next()){
+                String i = b.rs.getString("subjid");
+                String c = b.rs.getString("subjcode");
+                String d = b.rs.getString("subjdesc");
+                String t = b.rs.getString("subjunits");
+                String g = b.rs.getString("subjsched");
+                String[] items = {i,c,d,t,g};
+                tblmodel.addRow(items); //array
+            }
+        }catch (Exception ex){
+            System.out.print("not Success with sql!");
+             ex.printStackTrace();
+        }
+    }
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SubjectsForm.class.getName());
 
     /**
@@ -17,6 +52,7 @@ public class SubjectsForm extends javax.swing.JFrame {
      */
     public SubjectsForm() {
         initComponents();
+        showRecords();
     }
 
     /**
@@ -28,49 +64,20 @@ public class SubjectsForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jFrame1 = new javax.swing.JFrame();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        studTable = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        studyrlvl = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        studid = new javax.swing.JTextField();
-        studname = new javax.swing.JTextField();
-        studadd = new javax.swing.JTextField();
-        studcrs = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        studgender = new javax.swing.JTextField();
-        search = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
-        deleteBtn = new javax.swing.JButton();
-        saveBtn = new javax.swing.JButton();
-        editBtn = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
         jScrollPane3 = new javax.swing.JScrollPane();
-        studTable1 = new javax.swing.JTable();
+        subTable = new javax.swing.JTable();
         jLabel8 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        studyrlvl1 = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        studid1 = new javax.swing.JTextField();
-        studname1 = new javax.swing.JTextField();
-        studadd1 = new javax.swing.JTextField();
-        studcrs1 = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
-        studgender1 = new javax.swing.JTextField();
+        subjid = new javax.swing.JTextField();
+        subjcode = new javax.swing.JTextField();
+        subjdesc = new javax.swing.JTextField();
+        subjunits = new javax.swing.JTextField();
+        subjsched = new javax.swing.JTextField();
         search1 = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         deleteBtn1 = new javax.swing.JButton();
@@ -82,257 +89,52 @@ public class SubjectsForm extends javax.swing.JFrame {
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
-        jFrame1.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        studTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "ID", "Name", "Address", "Course", "Gender", "Year Level"
-            }
-        ));
-        studTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                studTableMouseClicked(evt);
-            }
-        });
-        jScrollPane2.setViewportView(studTable);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(102, 102, 255));
-        jLabel1.setText("STUDENT INFORMATION SYSTEM");
-
-        jLabel2.setText("ID");
-
-        jLabel3.setText("Name");
-
-        jLabel4.setText("Address");
-
-        jLabel5.setText("Course");
-
-        jLabel6.setText("Gender");
-
-        studid.addActionListener(this::studidActionPerformed);
-
-        studname.addActionListener(this::studnameActionPerformed);
-
-        jLabel7.setText("Year Level");
-
-        search.setText("Search");
-        search.setToolTipText("");
-        search.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                searchFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                searchFocusLost(evt);
-            }
-        });
-        search.addActionListener(this::searchActionPerformed);
-        search.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                searchKeyPressed(evt);
-            }
-        });
-
-        deleteBtn.setBackground(new java.awt.Color(0, 0, 51));
-        deleteBtn.setForeground(new java.awt.Color(255, 255, 255));
-        deleteBtn.setText("Delete");
-        deleteBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                deleteBtnMousePressed(evt);
-            }
-        });
-        deleteBtn.addActionListener(this::deleteBtnActionPerformed);
-
-        saveBtn.setBackground(new java.awt.Color(0, 0, 51));
-        saveBtn.setForeground(new java.awt.Color(255, 255, 255));
-        saveBtn.setText("Save");
-        saveBtn.addActionListener(this::saveBtnActionPerformed);
-
-        editBtn.setBackground(new java.awt.Color(0, 0, 51));
-        editBtn.setForeground(new java.awt.Color(255, 255, 255));
-        editBtn.setText("Edit");
-        editBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                editBtnMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(deleteBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(saveBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editBtn)
-                .addGap(46, 46, 46))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(saveBtn)
-                    .addComponent(deleteBtn)
-                    .addComponent(editBtn)))
-        );
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(studid, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studname, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studadd, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studcrs, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studgender, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studyrlvl, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addGap(15, 15, 15))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(search)
-                        .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studadd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studcrs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studgender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studyrlvl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(7, Short.MAX_VALUE))
-        );
-
-        jMenu1.setText("Open");
-
-        jMenuItem1.setText("Subjects");
-        jMenuItem1.addActionListener(this::jMenuItem1ActionPerformed);
-        jMenu1.add(jMenuItem1);
-
-        jMenuItem2.setText("Teachers");
-        jMenu1.add(jMenuItem2);
-
-        jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
-
-        jFrame1.setJMenuBar(jMenuBar1);
-
-        javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
-        jFrame1.getContentPane().setLayout(jFrame1Layout);
-        jFrame1Layout.setHorizontalGroup(
-            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jFrame1Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFrame1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(156, 156, 156))
-        );
-        jFrame1Layout.setVerticalGroup(
-            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFrame1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        studTable1.setModel(new javax.swing.table.DefaultTableModel(
+        subTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "ID", "Name", "Address", "Course", "Gender", "Year Level"
+                "ID", "Code", "Description", "Units", "Schedule"
             }
-        ));
-        studTable1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                studTable1MouseClicked(evt);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(studTable1);
+        subTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                subTableMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(subTable);
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(102, 102, 255));
-        jLabel8.setText("STUDENT INFORMATION SYSTEM");
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setText("SUBJECT DASHBOARD");
 
         jLabel9.setText("ID");
 
-        jLabel10.setText("Name");
+        jLabel10.setText("Code");
 
-        jLabel11.setText("Address");
+        jLabel11.setText("Description");
 
-        jLabel12.setText("Course");
+        jLabel12.setText("Units");
 
-        jLabel13.setText("Gender");
+        jLabel13.setText("Schedule");
 
-        studid1.addActionListener(this::studid1ActionPerformed);
+        subjid.addActionListener(this::subjidActionPerformed);
 
-        studname1.addActionListener(this::studname1ActionPerformed);
-
-        jLabel14.setText("Year Level");
+        subjcode.addActionListener(this::subjcodeActionPerformed);
 
         search1.setText("Search");
         search1.setToolTipText("");
@@ -351,8 +153,8 @@ public class SubjectsForm extends javax.swing.JFrame {
             }
         });
 
-        deleteBtn1.setBackground(new java.awt.Color(0, 0, 51));
-        deleteBtn1.setForeground(new java.awt.Color(255, 255, 255));
+        deleteBtn1.setBackground(new java.awt.Color(204, 102, 255));
+        deleteBtn1.setForeground(new java.awt.Color(0, 0, 0));
         deleteBtn1.setText("Delete");
         deleteBtn1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -361,13 +163,13 @@ public class SubjectsForm extends javax.swing.JFrame {
         });
         deleteBtn1.addActionListener(this::deleteBtn1ActionPerformed);
 
-        saveBtn1.setBackground(new java.awt.Color(0, 0, 51));
-        saveBtn1.setForeground(new java.awt.Color(255, 255, 255));
+        saveBtn1.setBackground(new java.awt.Color(204, 102, 255));
+        saveBtn1.setForeground(new java.awt.Color(0, 0, 0));
         saveBtn1.setText("Save");
         saveBtn1.addActionListener(this::saveBtn1ActionPerformed);
 
-        editBtn1.setBackground(new java.awt.Color(0, 0, 51));
-        editBtn1.setForeground(new java.awt.Color(255, 255, 255));
+        editBtn1.setBackground(new java.awt.Color(204, 102, 255));
+        editBtn1.setForeground(new java.awt.Color(0, 0, 0));
         editBtn1.setText("Edit");
         editBtn1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -411,24 +213,21 @@ public class SubjectsForm extends javax.swing.JFrame {
                             .addComponent(jLabel10)
                             .addComponent(jLabel11)
                             .addComponent(jLabel12)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel14))
+                            .addComponent(jLabel13))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(studid1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studname1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studadd1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studcrs1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studgender1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studyrlvl1, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(subjid, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(subjcode, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(subjdesc, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(subjunits, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(subjsched, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addGap(15, 15, 15))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(search1)
-                        .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addContainerGap())
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 16, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -436,40 +235,37 @@ public class SubjectsForm extends javax.swing.JFrame {
                 .addComponent(search1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studid1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subjid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studname1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subjcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studadd1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subjdesc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studcrs1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subjunits, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studgender1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subjsched, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studyrlvl1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         jMenu3.setText("Open");
 
-        jMenuItem3.setText("Subjects");
+        jMenuItem3.setText("Students");
         jMenuItem3.addActionListener(this::jMenuItem3ActionPerformed);
         jMenu3.add(jMenuItem3);
 
         jMenuItem4.setText("Teachers");
+        jMenuItem4.addActionListener(this::jMenuItem4ActionPerformed);
         jMenu3.add(jMenuItem4);
 
         jMenuBar2.add(jMenu3);
@@ -484,177 +280,79 @@ public class SubjectsForm extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(25, 25, 25)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(213, 213, 213)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(150, 150, 150)))
-                .addGap(12, 12, 12))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(41, 41, 41)
+                .addGap(35, 35, 35)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    // TODO add your handling code here:
 
-    private void studTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_studTableMouseClicked
-        int selectedRow = studTable.getSelectedRow();
+
+    private void subjcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subjcodeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_subjcodeActionPerformed
+
+    private void subTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subTableMouseClicked
+        int selectedRow = subTable.getSelectedRow();
 
         if (selectedRow < 0) return;
 
-        stdid = (String) studTable.getValueAt(selectedRow, 0);
-        studid.setText(stdid);
+        subid = (String) subTable.getValueAt(selectedRow, 0);
+        subjid.setText(subid);
 
-        sname = (String) studTable.getValueAt(selectedRow, 1);
-        studname.setText(sname);
+        subcode = (String) subTable.getValueAt(selectedRow, 1);
+        subjcode.setText(subcode);
 
-        sadd = (String) studTable.getValueAt(selectedRow, 2);
-        studadd.setText(sadd);
+        subdesc = (String) subTable.getValueAt(selectedRow, 2);
+        subjdesc.setText(subdesc);
 
-        scourse = (String) studTable.getValueAt(selectedRow, 3);
-        studcrs.setText(scourse);
+        subunits = (String) subTable.getValueAt(selectedRow, 3);
+        subjunits.setText(subunits);
 
-        sgender = (String) studTable.getValueAt(selectedRow, 4);
-        studgender.setText(sgender);
+        subsched = (String) subTable.getValueAt(selectedRow, 4);
+        subjsched.setText(subsched);
 
-        syrlvl = (String) studTable.getValueAt(selectedRow, 5);
-        studyrlvl.setText(syrlvl);
-    }//GEN-LAST:event_studTableMouseClicked
+       
+    }//GEN-LAST:event_subTableMouseClicked
 
-    private void studidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studidActionPerformed
+    private void subjidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subjidActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_studidActionPerformed
+    }//GEN-LAST:event_subjidActionPerformed
 
-    private void studnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studnameActionPerformed
+    private void subjcode1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subjcode1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_studnameActionPerformed
-
-    private void searchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusGained
-        if (search.getText().equals("Search")) {
-            search.setText("");
-        }
-    }//GEN-LAST:event_searchFocusGained
-
-    private void searchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchFocusLost
-        if (search.getText().trim().isEmpty()) {
-            search.setText("Search");
-        }
-    }//GEN-LAST:event_searchFocusLost
-
-    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_searchActionPerformed
-
-    private void searchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyPressed
-        showRecords();
-    }//GEN-LAST:event_searchKeyPressed
-
-    private void deleteBtnMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteBtnMousePressed
-
-    }//GEN-LAST:event_deleteBtnMousePressed
-
-    private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
-        Students b = new Students();
-        if ("".equals(studid.getText()) )
-        messagebox("Select a Student to Delete first","Delete");
-        else
-        b.delete_student(Integer.parseInt(studid.getText()));
-
-        showRecords();
-    }//GEN-LAST:event_deleteBtnActionPerformed
-
-    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        Students c = new Students();
-
-        c.newstudent(
-            Integer.parseInt(studid.getText()),
-            studname.getText(),
-            studadd.getText(),
-            studcrs.getText(),
-            studgender.getText(),
-            studyrlvl.getText()
-        );
-        showRecords();
-    }//GEN-LAST:event_saveBtnActionPerformed
-
-    private void editBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtnMouseClicked
-
-        Students c = new Students();
-
-        if ("".equals(studid.getText()) )
-        messagebox("Select a Student to Update first:","Update");
-        else
-        c.update_student(
-            Integer.parseInt(studid.getText()),
-            studname.getText(),
-            studadd.getText(),
-            studcrs.getText(),
-            studgender.getText(),
-            studyrlvl.getText()
-        );
-        showRecords();
-
-    }//GEN-LAST:event_editBtnMouseClicked
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
-
-    private void studTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_studTable1MouseClicked
-        int selectedRow = studTable.getSelectedRow();
-
-        if (selectedRow < 0) return;
-
-        stdid = (String) studTable.getValueAt(selectedRow, 0);
-        studid.setText(stdid);
-
-        sname = (String) studTable.getValueAt(selectedRow, 1);
-        studname.setText(sname);
-
-        sadd = (String) studTable.getValueAt(selectedRow, 2);
-        studadd.setText(sadd);
-
-        scourse = (String) studTable.getValueAt(selectedRow, 3);
-        studcrs.setText(scourse);
-
-        sgender = (String) studTable.getValueAt(selectedRow, 4);
-        studgender.setText(sgender);
-
-        syrlvl = (String) studTable.getValueAt(selectedRow, 5);
-        studyrlvl.setText(syrlvl);
-    }//GEN-LAST:event_studTable1MouseClicked
-
-    private void studid1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studid1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_studid1ActionPerformed
-
-    private void studname1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studname1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_studname1ActionPerformed
+    }//GEN-LAST:event_subjcode1ActionPerformed
 
     private void search1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_search1FocusGained
-        if (search.getText().equals("Search")) {
-            search.setText("");
+        if (search1.getText().equals("Search")) {
+            search1.setText("");
         }
     }//GEN-LAST:event_search1FocusGained
 
     private void search1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_search1FocusLost
-        if (search.getText().trim().isEmpty()) {
-            search.setText("Search");
+        if (search1.getText().trim().isEmpty()) {
+            search1.setText("Search");
         }
     }//GEN-LAST:event_search1FocusLost
 
@@ -669,53 +367,60 @@ public class SubjectsForm extends javax.swing.JFrame {
     private void deleteBtn1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteBtn1MousePressed
 
     }//GEN-LAST:event_deleteBtn1MousePressed
-
+    private void messagebox(String msg, String titlebar){
+     JOptionPane.showMessageDialog(null,msg,titlebar,JOptionPane.INFORMATION_MESSAGE);   
+     } 
+    
     private void deleteBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtn1ActionPerformed
-        Students b = new Students();
-        if ("".equals(studid.getText()) )
-        messagebox("Select a Student to Delete first","Delete");
+        Subjects b = new Subjects();
+        if ("".equals(subjid.getText()) )
+        messagebox("Select a Subject to Delete first","Delete");
         else
-        b.delete_student(Integer.parseInt(studid.getText()));
+        b.delete_subject(Integer.parseInt(subjid.getText()));
 
         showRecords();
     }//GEN-LAST:event_deleteBtn1ActionPerformed
 
     private void saveBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtn1ActionPerformed
-        Students c = new Students();
-
-        c.newstudent(
-            Integer.parseInt(studid.getText()),
-            studname.getText(),
-            studadd.getText(),
-            studcrs.getText(),
-            studgender.getText(),
-            studyrlvl.getText()
-        );
+        Subjects c = new Subjects();
+        c.newsubject(Integer.parseInt(subjid.getText()),
+            subjcode.getText(),
+            subjdesc.getText(),
+            Integer.parseInt(subjunits.getText()),
+            subjsched.getText());
         showRecords();
     }//GEN-LAST:event_saveBtn1ActionPerformed
 
     private void editBtn1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtn1MouseClicked
 
-        Students c = new Students();
+        Subjects c = new Subjects();
 
-        if ("".equals(studid.getText()) )
+        if ("".equals(subjid.getText()) )
         messagebox("Select a Student to Update first:","Update");
         else
-        c.update_student(
-            Integer.parseInt(studid.getText()),
-            studname.getText(),
-            studadd.getText(),
-            studcrs.getText(),
-            studgender.getText(),
-            studyrlvl.getText()
-        );
+        c.update_subject( Integer.parseInt(subjid.getText()),
+            subjcode.getText(),
+            subjdesc.getText(),
+            Integer.parseInt(subjunits.getText()),
+            subjsched.getText()
+                   );
         showRecords();
 
     }//GEN-LAST:event_editBtn1MouseClicked
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        // TODO add your handling code here:
+      StudentsForm a = new StudentsForm();
+      a.setVisible(true);
+      this.dispose();
+      a.showRecords();   
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+      TeachersForm a = new TeachersForm();
+      a.setVisible(true);
+      this.dispose();
+      a.showRecords(); 
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -743,58 +448,29 @@ public class SubjectsForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton deleteBtn;
     private javax.swing.JButton deleteBtn1;
-    private javax.swing.JButton editBtn;
     private javax.swing.JButton editBtn1;
-    private javax.swing.JFrame jFrame1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JButton saveBtn;
     private javax.swing.JButton saveBtn1;
-    private javax.swing.JTextField search;
     private javax.swing.JTextField search1;
-    private javax.swing.JTable studTable;
-    private javax.swing.JTable studTable1;
-    private javax.swing.JTextField studadd;
-    private javax.swing.JTextField studadd1;
-    private javax.swing.JTextField studcrs;
-    private javax.swing.JTextField studcrs1;
-    private javax.swing.JTextField studgender;
-    private javax.swing.JTextField studgender1;
-    private javax.swing.JTextField studid;
-    private javax.swing.JTextField studid1;
-    private javax.swing.JTextField studname;
-    private javax.swing.JTextField studname1;
-    private javax.swing.JTextField studyrlvl;
-    private javax.swing.JTextField studyrlvl1;
+    private javax.swing.JTable subTable;
+    private javax.swing.JTextField subjcode;
+    private javax.swing.JTextField subjdesc;
+    private javax.swing.JTextField subjid;
+    private javax.swing.JTextField subjsched;
+    private javax.swing.JTextField subjunits;
     // End of variables declaration//GEN-END:variables
 }

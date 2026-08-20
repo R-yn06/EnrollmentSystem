@@ -22,6 +22,7 @@ String syrlvl;
 
     public void showRecords(){
         DefaultTableModel tblmodel = (DefaultTableModel) studTable.getModel();
+        
         tblmodel.setRowCount(0);
         EnrollmentSystem b = new EnrollmentSystem();
         b.DBConnect();
@@ -54,6 +55,7 @@ String syrlvl;
      */
     public StudentsForm() {
         initComponents();
+        showRecords();
     }
 
     /**
@@ -149,8 +151,8 @@ String syrlvl;
             }
         });
 
-        deleteBtn.setBackground(new java.awt.Color(0, 0, 51));
-        deleteBtn.setForeground(new java.awt.Color(255, 255, 255));
+        deleteBtn.setBackground(new java.awt.Color(204, 255, 255));
+        deleteBtn.setForeground(new java.awt.Color(0, 0, 0));
         deleteBtn.setText("Delete");
         deleteBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -159,13 +161,13 @@ String syrlvl;
         });
         deleteBtn.addActionListener(this::deleteBtnActionPerformed);
 
-        saveBtn.setBackground(new java.awt.Color(0, 0, 51));
-        saveBtn.setForeground(new java.awt.Color(255, 255, 255));
+        saveBtn.setBackground(new java.awt.Color(204, 255, 255));
+        saveBtn.setForeground(new java.awt.Color(0, 0, 0));
         saveBtn.setText("Save");
         saveBtn.addActionListener(this::saveBtnActionPerformed);
 
-        editBtn.setBackground(new java.awt.Color(0, 0, 51));
-        editBtn.setForeground(new java.awt.Color(255, 255, 255));
+        editBtn.setBackground(new java.awt.Color(204, 255, 255));
+        editBtn.setForeground(new java.awt.Color(0, 0, 0));
         editBtn.setText("Edit");
         editBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -268,6 +270,7 @@ String syrlvl;
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setText("Teachers");
+        jMenuItem2.addActionListener(this::jMenuItem2ActionPerformed);
         jMenu1.add(jMenuItem2);
 
         jMenuBar1.add(jMenu1);
@@ -337,7 +340,7 @@ String syrlvl;
     studcrs.getText(),
     studgender.getText(),
     studyrlvl.getText()
-);
+    );
    showRecords();
     }//GEN-LAST:event_saveBtnActionPerformed
 
@@ -410,8 +413,18 @@ String syrlvl;
     }//GEN-LAST:event_deleteBtnActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
+      SubjectsForm b = new SubjectsForm();
+      b.setVisible(true);
+      this.dispose();
+      b.showRecords();   
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+      TeachersForm a = new TeachersForm();
+      a.setVisible(true);
+      this.dispose();
+      a.showRecords();         // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments

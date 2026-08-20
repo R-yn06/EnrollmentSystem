@@ -4,19 +4,53 @@
  */
 package com.mycompany.enrollmentsystem;
 
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author rcaraos
  */
 public class TeachersForm extends javax.swing.JFrame {
+    String teachid;
+    String teachname;
+    String teachdept;
+    String teachcontact;
     
+public void showRecords(){
+        DefaultTableModel tblmodel = (DefaultTableModel) teachTable.getModel();
+        tblmodel.setRowCount(0);
+        EnrollmentSystem b = new EnrollmentSystem();
+       
+        b.DBConnect();
+        
+        try{
+            String query = "select * from Teachers where concat(tid, tname, tdept, tcontact) like '%" + search2.getText() + "%'";
+            b.rs = b.st.executeQuery(query);
+            System.out.println("Success with sql!");  
+            
+            while (b.rs.next()){
+                String i = b.rs.getString("tid");
+                String c = b.rs.getString("tname");
+                String d = b.rs.getString("tdept");
+                String g = b.rs.getString("tcontact");
+                String[] items = {i,c,d,g};
+                tblmodel.addRow(items); //array
+            }
+        }catch (Exception ex){
+            System.out.print("not Success with sql!");
+             ex.printStackTrace();
+        }
+    }
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TeachersForm.class.getName());
 
     /**
-     * Creates new form Subjects
+     * Creates new form Teachers
      */
     public TeachersForm() {
         initComponents();
+        showRecords();
     }
 
     /**
@@ -29,110 +63,103 @@ public class TeachersForm extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane3 = new javax.swing.JScrollPane();
-        studTable1 = new javax.swing.JTable();
+        teachTable = new javax.swing.JTable();
         jLabel8 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        studyrlvl1 = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        studid1 = new javax.swing.JTextField();
-        studname1 = new javax.swing.JTextField();
-        studadd1 = new javax.swing.JTextField();
-        studcrs1 = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
-        studgender1 = new javax.swing.JTextField();
-        search1 = new javax.swing.JTextField();
+        tid = new javax.swing.JTextField();
+        tname = new javax.swing.JTextField();
+        tdept = new javax.swing.JTextField();
+        tcontact = new javax.swing.JTextField();
+        search2 = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
-        deleteBtn1 = new javax.swing.JButton();
-        saveBtn1 = new javax.swing.JButton();
-        editBtn1 = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        deleteBtn2 = new javax.swing.JButton();
+        saveBtn2 = new javax.swing.JButton();
+        editBtn2 = new javax.swing.JButton();
+        jMenuBar2 = new javax.swing.JMenuBar();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        studTable1.setModel(new javax.swing.table.DefaultTableModel(
+        teachTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "ID", "Name", "Address", "Course", "Gender", "Year Level"
+                "ID", "Name", "Department", "Contact"
             }
         ));
-        studTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        teachTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                studTable1MouseClicked(evt);
+                teachTableMouseClicked(evt);
             }
         });
-        jScrollPane3.setViewportView(studTable1);
+        jScrollPane3.setViewportView(teachTable);
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(102, 102, 255));
-        jLabel8.setText("STUDENT INFORMATION SYSTEM");
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setText("Teachers Dashboard");
 
         jLabel9.setText("ID");
 
         jLabel10.setText("Name");
 
-        jLabel11.setText("Address");
+        jLabel11.setText("Department");
 
-        jLabel12.setText("Course");
+        jLabel13.setText("Contact");
 
-        jLabel13.setText("Gender");
+        tid.addActionListener(this::tidActionPerformed);
 
-        studid1.addActionListener(this::studid1ActionPerformed);
+        tname.addActionListener(this::tnameActionPerformed);
 
-        studname1.addActionListener(this::studname1ActionPerformed);
-
-        jLabel14.setText("Year Level");
-
-        search1.setText("Search");
-        search1.setToolTipText("");
-        search1.addFocusListener(new java.awt.event.FocusAdapter() {
+        search2.setText("Search");
+        search2.setToolTipText("");
+        search2.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                search1FocusGained(evt);
+                search2FocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                search1FocusLost(evt);
+                search2FocusLost(evt);
             }
         });
-        search1.addActionListener(this::search1ActionPerformed);
-        search1.addKeyListener(new java.awt.event.KeyAdapter() {
+        search2.addActionListener(this::search2ActionPerformed);
+        search2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                search1KeyPressed(evt);
+                search2KeyPressed(evt);
             }
         });
 
-        deleteBtn1.setBackground(new java.awt.Color(0, 0, 51));
-        deleteBtn1.setForeground(new java.awt.Color(255, 255, 255));
-        deleteBtn1.setText("Delete");
-        deleteBtn1.addMouseListener(new java.awt.event.MouseAdapter() {
+        deleteBtn2.setBackground(new java.awt.Color(204, 102, 255));
+        deleteBtn2.setForeground(new java.awt.Color(0, 0, 0));
+        deleteBtn2.setText("Delete");
+        deleteBtn2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                deleteBtn1MousePressed(evt);
+                deleteBtn2MousePressed(evt);
             }
         });
-        deleteBtn1.addActionListener(this::deleteBtn1ActionPerformed);
+        deleteBtn2.addActionListener(this::deleteBtn2ActionPerformed);
 
-        saveBtn1.setBackground(new java.awt.Color(0, 0, 51));
-        saveBtn1.setForeground(new java.awt.Color(255, 255, 255));
-        saveBtn1.setText("Save");
-        saveBtn1.addActionListener(this::saveBtn1ActionPerformed);
+        saveBtn2.setBackground(new java.awt.Color(204, 102, 255));
+        saveBtn2.setForeground(new java.awt.Color(0, 0, 0));
+        saveBtn2.setText("Save");
+        saveBtn2.addActionListener(this::saveBtn2ActionPerformed);
 
-        editBtn1.setBackground(new java.awt.Color(0, 0, 51));
-        editBtn1.setForeground(new java.awt.Color(255, 255, 255));
-        editBtn1.setText("Edit");
-        editBtn1.addMouseListener(new java.awt.event.MouseAdapter() {
+        editBtn2.setBackground(new java.awt.Color(204, 102, 255));
+        editBtn2.setForeground(new java.awt.Color(0, 0, 0));
+        editBtn2.setText("Edit");
+        editBtn2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                editBtn1MouseClicked(evt);
+                editBtn2MouseClicked(evt);
             }
         });
 
@@ -142,11 +169,11 @@ public class TeachersForm extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(deleteBtn1)
+                .addComponent(deleteBtn2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(saveBtn1)
+                .addComponent(saveBtn2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editBtn1)
+                .addComponent(editBtn2)
                 .addGap(46, 46, 46))
         );
         jPanel4Layout.setVerticalGroup(
@@ -154,9 +181,9 @@ public class TeachersForm extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(saveBtn1)
-                    .addComponent(deleteBtn1)
-                    .addComponent(editBtn1)))
+                    .addComponent(saveBtn2)
+                    .addComponent(deleteBtn2)
+                    .addComponent(editBtn2)))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -171,206 +198,204 @@ public class TeachersForm extends javax.swing.JFrame {
                             .addComponent(jLabel9)
                             .addComponent(jLabel10)
                             .addComponent(jLabel11)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel14))
+                            .addComponent(jLabel13))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(studid1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studname1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studadd1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studcrs1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studgender1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studyrlvl1, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(tid, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(tname, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(tdept, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(tcontact, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addGap(15, 15, 15))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(search1)
-                        .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addComponent(search2)
+                        .addContainerGap())
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 16, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(search1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(search2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studid1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studname1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studadd1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tdept, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studcrs1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studgender1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tcontact, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(studyrlvl1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(35, 35, 35)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
-        jMenu1.setText("Open");
+        jMenu3.setText("Open");
 
-        jMenuItem1.setText("Subjects");
-        jMenuItem1.addActionListener(this::jMenuItem1ActionPerformed);
-        jMenu1.add(jMenuItem1);
+        jMenuItem3.setText("Students");
+        jMenuItem3.addActionListener(this::jMenuItem3ActionPerformed);
+        jMenu3.add(jMenuItem3);
 
-        jMenuItem2.setText("Teachers");
-        jMenu1.add(jMenuItem2);
+        jMenuItem4.setText("Subjects");
+        jMenuItem4.addActionListener(this::jMenuItem4ActionPerformed);
+        jMenu3.add(jMenuItem4);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar2.add(jMenu3);
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        jMenu4.setText("Edit");
+        jMenuBar2.add(jMenu4);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(jMenuBar2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(213, 213, 213)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(156, 156, 156))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(51, 51, 51)
+                .addGap(35, 35, 35)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    // TODO add your handling code here:
 
-    private void studTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_studTable1MouseClicked
-        int selectedRow = studTable.getSelectedRow();
+
+    private void tnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tnameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tnameActionPerformed
+
+    private void teachTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_teachTableMouseClicked
+        int selectedRow = teachTable.getSelectedRow();
 
         if (selectedRow < 0) return;
 
-        stdid = (String) studTable.getValueAt(selectedRow, 0);
-        studid.setText(stdid);
+        teachid = (String) teachTable.getValueAt(selectedRow, 0);
+        tid.setText(teachid);
 
-        sname = (String) studTable.getValueAt(selectedRow, 1);
-        studname.setText(sname);
+        teachname = (String) teachTable.getValueAt(selectedRow, 1);
+        tname.setText(teachname);
 
-        sadd = (String) studTable.getValueAt(selectedRow, 2);
-        studadd.setText(sadd);
+        teachdept = (String) teachTable.getValueAt(selectedRow, 2);
+        tdept.setText(teachdept);
 
-        scourse = (String) studTable.getValueAt(selectedRow, 3);
-        studcrs.setText(scourse);
+        teachcontact = (String) teachTable.getValueAt(selectedRow, 4);
+        tcontact.setText(teachcontact);
 
-        sgender = (String) studTable.getValueAt(selectedRow, 4);
-        studgender.setText(sgender);
+       
+    }//GEN-LAST:event_teachTableMouseClicked
 
-        syrlvl = (String) studTable.getValueAt(selectedRow, 5);
-        studyrlvl.setText(syrlvl);
-    }//GEN-LAST:event_studTable1MouseClicked
-
-    private void studid1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studid1ActionPerformed
+    private void tidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tidActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_studid1ActionPerformed
+    }//GEN-LAST:event_tidActionPerformed
 
-    private void studname1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studname1ActionPerformed
+    private void tname1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tname1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_studname1ActionPerformed
+    }//GEN-LAST:event_tname1ActionPerformed
 
-    private void search1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_search1FocusGained
-        if (search.getText().equals("Search")) {
-            search.setText("");
+    private void search2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_search2FocusGained
+        if (search2.getText().equals("Search")) {
+            search2.setText("");
         }
-    }//GEN-LAST:event_search1FocusGained
+    }//GEN-LAST:event_search2FocusGained
 
-    private void search1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_search1FocusLost
-        if (search.getText().trim().isEmpty()) {
-            search.setText("Search");
+    private void search2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_search2FocusLost
+        if (search2.getText().trim().isEmpty()) {
+            search2.setText("Search");
         }
-    }//GEN-LAST:event_search1FocusLost
+    }//GEN-LAST:event_search2FocusLost
 
-    private void search1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_search1ActionPerformed
+    private void search2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_search2ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_search1ActionPerformed
+    }//GEN-LAST:event_search2ActionPerformed
 
-    private void search1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search1KeyPressed
+    private void search2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search2KeyPressed
         showRecords();
-    }//GEN-LAST:event_search1KeyPressed
+    }//GEN-LAST:event_search2KeyPressed
 
-    private void deleteBtn1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteBtn1MousePressed
+    private void deleteBtn2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteBtn2MousePressed
 
-    }//GEN-LAST:event_deleteBtn1MousePressed
-
-    private void deleteBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtn1ActionPerformed
-        Students b = new Students();
-        if ("".equals(studid.getText()) )
-        messagebox("Select a Student to Delete first","Delete");
+    }//GEN-LAST:event_deleteBtn2MousePressed
+    private void messagebox(String msg, String titlebar){
+     JOptionPane.showMessageDialog(null,msg,titlebar,JOptionPane.INFORMATION_MESSAGE);   
+     } 
+    
+    private void deleteBtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtn2ActionPerformed
+        Teachers b = new Teachers();
+        if ("".equals(tid.getText()) )
+        messagebox("Select a Teacher to Delete first","Delete");
         else
-        b.delete_student(Integer.parseInt(studid.getText()));
+        b.delete_teacher(Integer.parseInt(tid.getText()));
 
         showRecords();
-    }//GEN-LAST:event_deleteBtn1ActionPerformed
+    }//GEN-LAST:event_deleteBtn2ActionPerformed
 
-    private void saveBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtn1ActionPerformed
-        Students c = new Students();
-
-        c.newstudent(
-            Integer.parseInt(studid.getText()),
-            studname.getText(),
-            studadd.getText(),
-            studcrs.getText(),
-            studgender.getText(),
-            studyrlvl.getText()
-        );
+    private void saveBtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtn2ActionPerformed
+        Teachers c = new Teachers();
+        c.newteacher (Integer.parseInt(tid.getText()),
+            tname.getText(),
+            tdept.getText(),
+            tcontact.getText());
         showRecords();
-    }//GEN-LAST:event_saveBtn1ActionPerformed
+    }//GEN-LAST:event_saveBtn2ActionPerformed
 
-    private void editBtn1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtn1MouseClicked
+    private void editBtn2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtn2MouseClicked
 
-        Students c = new Students();
+        Teachers c = new Teachers();
 
-        if ("".equals(studid.getText()) )
-        messagebox("Select a Student to Update first:","Update");
+        if ("".equals(tid.getText()) )
+        messagebox("Select a Teacher to Update first:","Update");
         else
-        c.update_student(
-            Integer.parseInt(studid.getText()),
-            studname.getText(),
-            studadd.getText(),
-            studcrs.getText(),
-            studgender.getText(),
-            studyrlvl.getText()
-        );
+        c.update_Teacher( Integer.parseInt(tid.getText()),
+            tname.getText(),
+            tdept.getText(),
+            tcontact.getText()
+                   );
         showRecords();
-    }//GEN-LAST:event_editBtn1MouseClicked
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_editBtn2MouseClicked
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+      StudentsForm a = new StudentsForm();
+      a.setVisible(true);
+      this.dispose();
+      a.showRecords();   
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+      SubjectsForm a = new SubjectsForm();
+      a.setVisible(true);
+      this.dispose();
+      a.showRecords(); 
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -398,31 +423,27 @@ public class TeachersForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton deleteBtn1;
-    private javax.swing.JButton editBtn1;
+    private javax.swing.JButton deleteBtn2;
+    private javax.swing.JButton editBtn2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JButton saveBtn1;
-    private javax.swing.JTextField search1;
-    private javax.swing.JTable studTable1;
-    private javax.swing.JTextField studadd1;
-    private javax.swing.JTextField studcrs1;
-    private javax.swing.JTextField studgender1;
-    private javax.swing.JTextField studid1;
-    private javax.swing.JTextField studname1;
-    private javax.swing.JTextField studyrlvl1;
+    private javax.swing.JButton saveBtn2;
+    private javax.swing.JTextField search2;
+    private javax.swing.JTextField tcontact;
+    private javax.swing.JTextField tdept;
+    private javax.swing.JTable teachTable;
+    private javax.swing.JTextField tid;
+    private javax.swing.JTextField tname;
     // End of variables declaration//GEN-END:variables
 }

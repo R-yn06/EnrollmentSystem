@@ -23,7 +23,7 @@ public class EnrollmentSystem {
     static ResultSet rs; 
 
     public static void main(String[] args) { 
-      StudentsForm a = new StudentsForm();
+     StudentsForm a = new StudentsForm();
       a.setVisible(true);
       a.showRecords();      
     }
