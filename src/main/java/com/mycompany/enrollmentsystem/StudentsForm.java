@@ -43,7 +43,7 @@ String syrlvl;
                 tblmodel.addRow(items); //array
             }
         }catch (Exception ex){
-            System.out.print("not Success with sql!");
+            System.out.print("not Success with sql! Studdents");
              ex.printStackTrace();
         }
     }
