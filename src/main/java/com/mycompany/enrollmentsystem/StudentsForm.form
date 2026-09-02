@@ -180,13 +180,13 @@
                               <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="studid" alignment="1" max="32767" attributes="0"/>
-                              <Component id="studname" alignment="1" max="32767" attributes="0"/>
-                              <Component id="studadd" alignment="1" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="studgender" pref="182" max="32767" attributes="0"/>
                               <Component id="studcrs" alignment="1" max="32767" attributes="0"/>
-                              <Component id="studgender" alignment="1" max="32767" attributes="0"/>
-                              <Component id="studyrlvl" alignment="1" max="32767" attributes="0"/>
+                              <Component id="studadd" alignment="1" max="32767" attributes="0"/>
+                              <Component id="studname" alignment="1" max="32767" attributes="0"/>
+                              <Component id="studid" alignment="1" max="32767" attributes="0"/>
+                              <Component id="studyrlvl" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                       </Group>

@@ -24,8 +24,11 @@ public void showRecords(){
        
         b.DBConnect();
         
+        String searchText = search2.getText();
+        if (searchText.equals("Search")) searchText = ""; 
+        
         try{
-            String query = "select * from Teachers where concat(tid, tname, tdept, tcontact) like '%" + search2.getText() + "%'";
+            String query = "select * from Teachers where concat(tid, tname, tdept, tcontact) like '%" + searchText + "%'";
             b.rs = b.st.executeQuery(query);
             System.out.println("Success with sql!");  
             
@@ -108,7 +111,7 @@ public void showRecords(){
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(102, 102, 255));
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("Teachers Dashboard");
+        jLabel8.setText("TEACHERS' DASHBOARD");
 
         jLabel9.setText("ID");
 
@@ -200,11 +203,11 @@ public void showRecords(){
                             .addComponent(jLabel11)
                             .addComponent(jLabel13))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tid, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(tdept, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                             .addComponent(tname, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(tdept, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(tcontact, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(tid, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(tcontact))
                         .addGap(15, 15, 15))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(search2)
@@ -260,28 +263,26 @@ public void showRecords(){
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(213, 213, 213)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(25, 25, 25)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(229, 229, 229)
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(35, 35, 35)
+                .addGap(20, 20, 20)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         pack();
@@ -307,7 +308,7 @@ public void showRecords(){
         teachdept = (String) teachTable.getValueAt(selectedRow, 2);
         tdept.setText(teachdept);
 
-        teachcontact = (String) teachTable.getValueAt(selectedRow, 4);
+        teachcontact = (String) teachTable.getValueAt(selectedRow, 3);
         tcontact.setText(teachcontact);
 
        

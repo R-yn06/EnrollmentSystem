@@ -22,13 +22,16 @@ String syrlvl;
 
     public void showRecords(){
         DefaultTableModel tblmodel = (DefaultTableModel) studTable.getModel();
-        
         tblmodel.setRowCount(0);
         EnrollmentSystem b = new EnrollmentSystem();
         b.DBConnect();
         
+        String searchText = search.getText();
+        if (searchText.equals("Search")) searchText = ""; 
+    
+        
         try{
-            String query = "select * from students where concat(studid, studname, studadd, studcrs, studgender, studyrlvl) like '%" + search.getText() + "%'";
+            String query = "select * from students where concat(studid, studname, studadd, studcrs, studgender, studyrlvl) like '%" + searchText + "%'";
             b.rs = b.st.executeQuery(query);
             System.out.println("Success with sql!");  
             
@@ -43,8 +46,7 @@ String syrlvl;
                 tblmodel.addRow(items); //array
             }
         }catch (Exception ex){
-            System.out.print("not Success with sql! Studdents");
-             ex.printStackTrace();
+            System.out.print("not Success with sql!");
         }
     }
     
@@ -214,13 +216,13 @@ String syrlvl;
                             .addComponent(jLabel6)
                             .addComponent(jLabel7))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(studid, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studname, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studadd, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(studgender, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
                             .addComponent(studcrs, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studgender, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(studyrlvl, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(studadd, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(studname, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(studid, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(studyrlvl))
                         .addGap(15, 15, 15))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(search)
