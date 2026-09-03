@@ -26,16 +26,8 @@ public class EnrollmentSystem {
      StudentsForm a = new StudentsForm();
       a.setVisible(true);
       a.showRecords();   
-      
-      try {
-    javax.swing.UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
-    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-    java.util.logging.Logger.getLogger(StudentsForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        
     }
-
-    }
-    
-    
     public boolean DBConnect(){
  
        try{

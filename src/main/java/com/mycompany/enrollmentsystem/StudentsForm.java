@@ -130,6 +130,7 @@ String syrlvl;
 
         jLabel6.setText("Gender");
 
+        studid.setEnabled(false);
         studid.addActionListener(this::studidActionPerformed);
 
         studname.addActionListener(this::studnameActionPerformed);
@@ -336,7 +337,6 @@ String syrlvl;
   Students c = new Students();
   
    c.newstudent(
-    Integer.parseInt(studid.getText()),
     studname.getText(),
     studadd.getText(),
     studcrs.getText(),

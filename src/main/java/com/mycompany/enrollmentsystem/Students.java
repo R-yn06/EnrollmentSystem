@@ -4,6 +4,9 @@
  */
 package com.mycompany.enrollmentsystem;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 
 
@@ -14,15 +17,33 @@ package com.mycompany.enrollmentsystem;
 
 public class Students {
  
- public void newstudent(int studid, String studname, String studadd,
-                       String studcrs, String studgender, String studyrlvl) {
+public void newstudent(String studname, String studadd,
+                       String studcrs, String studgender,
+                       String studyrlvl) {
 
     EnrollmentSystem b = new EnrollmentSystem();
     b.DBConnect();
 
     try {
-        String query = "INSERT INTO Students VALUES (" +
-                studid + ", '" +
+
+        // Check if the Students table is empty
+        String checkQuery = "SELECT COUNT(*) FROM Students";
+        ResultSet rs = b.st.executeQuery(checkQuery);
+
+        int count = 0;
+
+        if (rs.next()) {
+            count = rs.getInt(1);
+        }
+
+        // If table is empty, reset AUTO_INCREMENT to 1000
+        if (count == 0) {
+            b.st.executeUpdate("ALTER TABLE Students AUTO_INCREMENT = 1000");
+        }
+
+        // Insert student
+        String query = "INSERT INTO Students " +
+                "(studname, studadd, studcrs, studgender, studyrlvl) VALUES ('" +
                 studname + "', '" +
                 studadd + "', '" +
                 studcrs + "', '" +
@@ -40,6 +61,8 @@ public class Students {
         ex.printStackTrace();
     }
 }
+
+
     
     public void delete_student(int studid){
         EnrollmentSystem b = new EnrollmentSystem();
@@ -54,27 +77,24 @@ public class Students {
     }
    
     }
-    public void update_student(int studid, String studname, String studadd,
-                   String studcrs, String studgender, String studyrlvl){
+    public void update_student(int studid, String studname, String studadd, String studcrs, String studgender, String studyrlvl){
     EnrollmentSystem b = new EnrollmentSystem();
     b.DBConnect();
-    String query = "UPDATE students SET studname = ?, studadd = ?, studcrs = ?, "
-                 + "studgender = ?, studyrlvl = ? WHERE studid = ?";
-    try {
-        java.sql.PreparedStatement ps = b.con.prepareStatement(query);
-        ps.setString(1, studname);
-        ps.setString(2, studadd);
-        ps.setString(3, studcrs);
-        ps.setString(4, studgender);
-        ps.setString(5, studyrlvl);
-        ps.setInt(6, studid);
-        int rows = ps.executeUpdate();
-        if (rows > 0) {
-            System.out.println("Student updated successfully!");
+    
+    try{
+            String query = "update students set studname = '" + studname 
+                + "', studadd = '" + studadd 
+                + "', studcrs = '" + studcrs
+                + "', studyrlvl = '" + studyrlvl 
+                + "' where studid = " + studid;
+            int rows = b.st.executeUpdate(query);
+            if (rows > 0) {
+                System.out.println("Updated successfully!");
+            } else {
+                System.out.println("No matching student found!");
+            }
+        }catch (SQLException ex){
+            System.out.println("not Success with sql!");
         }
-    } catch(Exception ex) {
-        System.out.println("Not successful!");
-        ex.printStackTrace();
     }
-}
-}
+    }

@@ -121,6 +121,7 @@ public void showRecords(){
 
         jLabel13.setText("Contact");
 
+        tid.setEnabled(false);
         tid.addActionListener(this::tidActionPerformed);
 
         tname.addActionListener(this::tnameActionPerformed);
@@ -361,7 +362,7 @@ public void showRecords(){
 
     private void saveBtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtn2ActionPerformed
         Teachers c = new Teachers();
-        c.newteacher (Integer.parseInt(tid.getText()),
+        c.newteacher (
             tname.getText(),
             tdept.getText(),
             tcontact.getText());
