@@ -134,6 +134,7 @@ public void showRecords(){
 
         jLabel13.setText("Schedule");
 
+        subjid.setEnabled(false);
         subjid.addActionListener(this::subjidActionPerformed);
 
         subjcode.addActionListener(this::subjcodeActionPerformed);
@@ -385,7 +386,7 @@ public void showRecords(){
 
     private void saveBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtn1ActionPerformed
         Subjects c = new Subjects();
-        c.newsubject(Integer.parseInt(subjid.getText()),
+        c.newsubject(
             subjcode.getText(),
             subjdesc.getText(),
             Integer.parseInt(subjunits.getText()),
@@ -400,7 +401,8 @@ public void showRecords(){
         if ("".equals(subjid.getText()) )
         messagebox("Select a Student to Update first:","Update");
         else
-        c.update_subject( Integer.parseInt(subjid.getText()),
+        c.update_subject( 
+            Integer.parseInt(subjid.getText()),
             subjcode.getText(),
             subjdesc.getText(),
             Integer.parseInt(subjunits.getText()),

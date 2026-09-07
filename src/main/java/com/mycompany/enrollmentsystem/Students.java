@@ -26,7 +26,7 @@ public void newstudent(String studname, String studadd,
 
     try {
 
-        // Check if the Students table is empty
+       
         String checkQuery = "SELECT COUNT(*) FROM Students";
         ResultSet rs = b.st.executeQuery(checkQuery);
 
@@ -36,7 +36,7 @@ public void newstudent(String studname, String studadd,
             count = rs.getInt(1);
         }
 
-        // If table is empty, reset AUTO_INCREMENT to 1000
+        
         if (count == 0) {
             b.st.executeUpdate("ALTER TABLE Students AUTO_INCREMENT = 1000");
         }
