@@ -14,15 +14,15 @@ public class Assign extends EnrollmentSystem {
         return subjid;
     }
 
-    public String assignTchr(int tchrid) {
+    public String assignTchr(int teachid) {
         DBConnect();
 
         // Directly insert TID and SubjID since SubjID is the primary key
-        String query = "INSERT INTO assign(TID, SubjID) VALUES(" + tchrid + ", " + subjid + ")";
+        String query = "INSERT INTO assign(TID, SubjID) VALUES(" + teachid + ", " + subjid + ")";
 
         try {
             st.executeUpdate(query);
-            return "Teacher " + tchrid + " assigned to subject " + subjid;
+            return "Teacher " + teachid + " assigned to subject " + subjid;
         } catch (java.sql.SQLIntegrityConstraintViolationException e) {
             return "This subject is already assigned to a teacher.";
         } catch (Exception e) {
@@ -31,12 +31,12 @@ public class Assign extends EnrollmentSystem {
         }
     }
 
-    public String deleteSubject(int tchrid) {
+    public String deleteSubject(int teachid) {
         DBConnect();
 
-        String query = "DELETE FROM assign WHERE TID = " + tchrid + " AND SubjID = " + subjid;
+        String query = "DELETE FROM assign WHERE TID = " + teachid + " AND SubjID = " + subjid;
 
-        System.out.println("tchrid = " + tchrid);
+        System.out.println("teachid = " + teachid);
         System.out.println("subjid = " + subjid);
         System.out.println("query = " + query);
 
@@ -45,7 +45,7 @@ public class Assign extends EnrollmentSystem {
             System.out.println("rows deleted = " + rows);
 
             if (rows > 0) {
-                return "Subject " + subjid + " unassigned from teacher " + tchrid;
+                return "Subject " + subjid + " unassigned from teacher " + teachid;
             } else {
                 return "Teacher is not assigned to this subject.";
             }

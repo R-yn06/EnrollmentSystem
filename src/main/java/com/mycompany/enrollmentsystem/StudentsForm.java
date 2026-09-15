@@ -1,5 +1,6 @@
 package com.mycompany.enrollmentsystem;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.Component;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -650,7 +651,7 @@ String syrlvl;
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+     
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new StudentsForm().setVisible(true));
     }

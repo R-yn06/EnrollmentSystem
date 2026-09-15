@@ -326,7 +326,7 @@ public void showRecords(){
         AssignBtn.setText("Assign Subject");
         AssignBtn.addActionListener(this::AssignBtnActionPerformed);
 
-        DropBtn.setText("Drop Subject");
+        DropBtn.setText("Delete Subject");
         DropBtn.addActionListener(this::DropBtnActionPerformed);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);

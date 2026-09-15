@@ -456,7 +456,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="DropBtn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Drop Subject"/>
+            <Property name="text" type="java.lang.String" value="Delete Subject"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DropBtnActionPerformed"/>
