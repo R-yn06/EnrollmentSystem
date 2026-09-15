@@ -94,7 +94,7 @@ public void newstudent(String studname, String studadd,
                 System.out.println("No matching student found!");
             }
         }catch (SQLException ex){
-            System.out.println("not Success with sql!");
+            System.out.println("not Success with sql! ");
         }
     }
     }

@@ -45,8 +45,56 @@ public void showRecords(){
             System.out.print("not Success with sql! subjects");
              ex.printStackTrace();
         }
+        showClassList();
+    }
+private void showClassList() {
+    // Guard check: don't query if subject ID is invalid or unselected
+    if (subid == null || subid.toString().trim().isEmpty() || subid.toString().equals("0")) {
+        System.out.println("SHOW CLASS LIST: No subject selected or subid is empty.");
+        return;
     }
 
+    DefaultTableModel tblmodel = (DefaultTableModel) classList.getModel();
+    tblmodel.setRowCount(0);
+
+    EnrollmentSystem b = new EnrollmentSystem();
+    b.DBConnect();
+
+    System.out.println("--- STARTING SHOW CLASS LIST ---");
+    System.out.println("Target Subject ID (subid): " + subid);
+
+    try {
+        String query = "select * from students where studid in(select studid from enroll where subjid = " + subid + ")";
+        System.out.println("Query being executed: " + query);
+
+        b.rs = b.st.executeQuery(query);
+
+        int rowCount = 0;
+        while (b.rs.next()) {
+            rowCount++;
+
+            String i = b.rs.getString("studid");    
+            String c = b.rs.getString("studname");    
+            String d = b.rs.getString("studcrs");     // Fixed: changed 'studcourse' to 'studcrs'
+            String t = b.rs.getString("studadd");    
+            String g = b.rs.getString("studgender");    
+            String y = b.rs.getString("studyrlvl");
+
+            Object[] item = {i, c, d, t, g, y, ""};
+            tblmodel.addRow(item);
+            System.out.println("Added student to class list table: " + c);
+        }
+
+        System.out.println("Total students fetched for subject: " + rowCount);
+        if (rowCount == 0) {
+            System.out.println("WARNING: Query succeeded, but 0 students are enrolled in subject ID " + subid);
+        }
+
+    } catch (Exception ex) {
+        System.out.println("--- EXCEPTION CAUGHT IN SHOW CLASS LIST ---");
+        ex.printStackTrace(); // Prints the exact error details to the Output console
+    }
+}
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SubjectsForm.class.getName());
 
     /**
@@ -55,6 +103,8 @@ public void showRecords(){
     public SubjectsForm() {
         initComponents();
         showRecords();
+
+    
     }
 
     /**
@@ -66,6 +116,8 @@ public void showRecords(){
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane2 = new javax.swing.JScrollPane();
+        studTable = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         subTable = new javax.swing.JTable();
         jLabel8 = new javax.swing.JLabel();
@@ -85,11 +137,32 @@ public void showRecords(){
         deleteBtn1 = new javax.swing.JButton();
         saveBtn1 = new javax.swing.JButton();
         editBtn1 = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        classList = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
+
+        studTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "ID", "Name", "Address", "Course", "Gender", "Year Level"
+            }
+        ));
+        studTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                studTableMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(studTable);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -261,6 +334,27 @@ public void showRecords(){
                 .addContainerGap(42, Short.MAX_VALUE))
         );
 
+        classList.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "ID", "Name", "Address", "Course", "Gender", "Year Level"
+            }
+        ));
+        classList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                classListMouseClicked(evt);
+            }
+        });
+        jScrollPane4.setViewportView(classList);
+
+        jLabel1.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
+        jLabel1.setText("CLASS LIST");
+
         jMenu3.setText("Open");
 
         jMenuItem3.setText("Students");
@@ -287,13 +381,18 @@ public void showRecords(){
                     .addGroup(layout.createSequentialGroup()
                         .addGap(25, 25, 25)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 802, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(213, 213, 213)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(60, 60, 60)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -304,7 +403,11 @@ public void showRecords(){
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33))
         );
 
         pack();
@@ -336,7 +439,13 @@ public void showRecords(){
         subsched = (String) subTable.getValueAt(selectedRow, 4);
         subjsched.setText(subsched);
 
+       Enroll a= new Enroll();
+       a.setsubjid(Integer.parseInt(subid));
        
+       Assign b= new Assign();
+       b.setsubjid(Integer.parseInt(subid));
+       
+       showClassList();
     }//GEN-LAST:event_subTableMouseClicked
 
     private void subjidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subjidActionPerformed
@@ -413,18 +522,26 @@ public void showRecords(){
     }//GEN-LAST:event_editBtn1MouseClicked
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-      StudentsForm a = new StudentsForm();
+      StudentsForm a = new StudentsForm(this);
       a.setVisible(true);
-      this.dispose();
       a.showRecords();   
+      
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
       TeachersForm a = new TeachersForm();
       a.setVisible(true);
-      this.dispose();
+      
       a.showRecords(); 
     }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void studTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_studTableMouseClicked
+        
+    }//GEN-LAST:event_studTableMouseClicked
+
+    private void classListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_classListMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_classListMouseClicked
 
     /**
      * @param args the command line arguments
@@ -452,8 +569,10 @@ public void showRecords(){
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable classList;
     private javax.swing.JButton deleteBtn1;
     private javax.swing.JButton editBtn1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -467,9 +586,12 @@ public void showRecords(){
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JButton saveBtn1;
     private javax.swing.JTextField search1;
+    private javax.swing.JTable studTable;
     private javax.swing.JTable subTable;
     private javax.swing.JTextField subjcode;
     private javax.swing.JTextField subjdesc;

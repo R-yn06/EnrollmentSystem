@@ -1,5 +1,6 @@
 package com.mycompany.enrollmentsystem;
 
+import java.awt.Component;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -19,6 +20,7 @@ String sadd;
 String scourse;
 String sgender;
 String syrlvl;
+    private SubjectsForm parentForm;
 
     public void showRecords(){
         DefaultTableModel tblmodel = (DefaultTableModel) studTable.getModel();
@@ -55,10 +57,13 @@ String syrlvl;
     /**
      * Creates new form StudentsForm
      */
+    public StudentsForm(SubjectsForm parentForm) {
+        initComponents();
+        this.parentForm = parentForm;
+    }
     public StudentsForm() {
         initComponents();
-        showRecords();
-    }
+           }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -90,6 +95,12 @@ String syrlvl;
         deleteBtn = new javax.swing.JButton();
         saveBtn = new javax.swing.JButton();
         editBtn = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        enrollTable = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        DropBtn = new javax.swing.JButton();
+        Enrollbtn = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -227,11 +238,10 @@ String syrlvl;
                         .addGap(15, 15, 15))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(search)
-                        .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -261,10 +271,80 @@ String syrlvl;
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(studyrlvl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addContainerGap())
         );
+
+        enrollTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "SubID", "SubCode", "SubDescription", "SubUnits", "SubSchedule"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        enrollTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                enrollTableMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(enrollTable);
+
+        DropBtn.setText("Drop Subject");
+        DropBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DropBtnMouseClicked(evt);
+            }
+        });
+
+        Enrollbtn.setText("Enroll Subject");
+        Enrollbtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                EnrollbtnMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(265, Short.MAX_VALUE)
+                .addComponent(DropBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGap(22, 22, 22)
+                    .addComponent(Enrollbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(280, Short.MAX_VALUE)))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(16, Short.MAX_VALUE)
+                .addComponent(DropBtn)
+                .addContainerGap())
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                    .addContainerGap(16, Short.MAX_VALUE)
+                    .addComponent(Enrollbtn)
+                    .addContainerGap()))
+        );
+
+        jLabel8.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
+        jLabel8.setText("ENROLLED SUBJECTS");
 
         jMenu1.setText("Open");
 
@@ -287,16 +367,28 @@ String syrlvl;
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(28, 28, 28)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 604, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(323, 323, 323)
+                                .addComponent(jLabel8))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(193, 193, 193)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(156, 156, 156))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -307,6 +399,12 @@ String syrlvl;
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addComponent(jLabel8)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -382,8 +480,54 @@ String syrlvl;
         
         syrlvl = (String) studTable.getValueAt(selectedRow, 5);
         studyrlvl.setText(syrlvl);
+        
+        showEnroll();
     }//GEN-LAST:event_studTableMouseClicked
 
+    private void showEnroll(){
+    DefaultTableModel tblmodel = (DefaultTableModel) enrollTable.getModel();
+    tblmodel.setRowCount(0);
+    EnrollmentSystem b = new EnrollmentSystem();
+    b.DBConnect();
+    
+    // Check if the student ID is actually correct
+    System.out.println("--- STARTING SHOW ENROLL ---");
+    System.out.println("Target Student ID (stdid): " + stdid);
+    
+    try {
+        String query = "select * from subjects where subjid in(select subjid from enroll where studid = " + stdid + " )";
+        System.out.println("Query being executed: " + query);
+        
+        b.rs = b.st.executeQuery(query);
+        
+        int rowCount = 0;
+        while (b.rs.next()) {
+            rowCount++;
+            System.out.println("Found subject row " + rowCount + " in database...");
+            
+            // If it fails on any of these lines, your column names are wrong
+            String i = b.rs.getString("subjid");
+            String c = b.rs.getString("subjcode");
+            String d = b.rs.getString("subjdesc");
+            int t = b.rs.getInt("subjunits"); 
+            String g = b.rs.getString("subjsched");
+            
+            Object[] items = {i, c, d, t, g}; 
+            tblmodel.addRow(items);
+            System.out.println("Successfully added subject: " + c + " to GUI table.");
+        }
+        
+        System.out.println("Total rows fetched and added: " + rowCount);
+        if (rowCount == 0) {
+            System.out.println("WARNING: Database query successful, but returned 0 rows.");
+        }
+        
+    } catch (Exception ex) {
+        System.out.println("--- EXCEPTION CAUGHT IN SHOWENROLL ---");
+        ex.printStackTrace();
+    }
+        }
+        
     private void editBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtnMouseClicked
         
   Students c = new Students();
@@ -417,20 +561,78 @@ String syrlvl;
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
       SubjectsForm b = new SubjectsForm();
       b.setVisible(true);
-      this.dispose();
+      
       b.showRecords();   
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
       TeachersForm a = new TeachersForm();
       a.setVisible(true);
-      this.dispose();
+      
       a.showRecords();         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    public static int okcancel(String theMessage){
+     int result = JOptionPane.showConfirmDialog((Component) null, theMessage,
+             "alert", JOptionPane.OK_CANCEL_OPTION);
+     return result;
+              }
+    private void DropBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DropBtnMouseClicked
+        Enroll a = new Enroll();
+        
+        String result = a.dropSubject(Integer.parseInt(stdid));
+        
+        if (result.equals("Drop Failed")) {
+        messagebox(result, "Drop Failed");
+        } else if (result.equals("Student is not enrolled in this subject.")) {
+        messagebox(result, "Drop Failed");
+        } else {
+        messagebox(result, "Success!!");
+        showEnroll();
+        }
+    }//GEN-LAST:event_DropBtnMouseClicked
+
+    private void enrollTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_enrollTableMouseClicked
+     Enroll a = new Enroll();
+        int selectedRow = enrollTable.getSelectedRow();
+        
+        
+
+    if (selectedRow != -1) {
+        int selectedSubjid = Integer.parseInt(
+                enrollTable.getValueAt(selectedRow, 0).toString() );
+        System.out.println("Selected Subject ID: " + selectedSubjid);
+        a.setsubjid(selectedSubjid);
+    }
+    }//GEN-LAST:event_enrollTableMouseClicked
+
+    
+    private void EnrollbtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EnrollbtnMouseClicked
+        Enroll a = new Enroll();
+       int i = okcancel("Enroll student ID:" + stdid +" to subject ID:" + a.getsubjid());
+       if(i==0){
+           
+           String result =a.enrollStud(Integer.parseInt(stdid));
+           
+           if (result.equals("Student is already enrolled in this subject.")) {
+           messagebox(result, "Enrollment Failed");
+}          else {
+           messagebox(result, "Success!!");
+           showEnroll();
+}
+          /* messagebox("Enroll"+studid,"enroll");
+           a.enrollStud(Integer.parseInt(stdid));
+           */
+       }else{
+           messagebox("Cancel Enroll "+ stdid , "enroll");
+       }
+       
+    }//GEN-LAST:event_EnrollbtnMouseClicked
 
     /**
      * @param args the command line arguments
      */
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -454,8 +656,11 @@ String syrlvl;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton DropBtn;
+    private javax.swing.JButton Enrollbtn;
     private javax.swing.JButton deleteBtn;
     private javax.swing.JButton editBtn;
+    private javax.swing.JTable enrollTable;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -463,6 +668,7 @@ String syrlvl;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -470,7 +676,9 @@ String syrlvl;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton saveBtn;
     private javax.swing.JTextField search;
     private javax.swing.JTable studTable;
