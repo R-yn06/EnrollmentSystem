@@ -23,27 +23,25 @@ public class EnrollmentSystem {
 
     static ResultSet rs; 
 
-    public static void main(String[] args) { 
-     
-      try {
-       
+    public static void main(String[] args) {      
+      try {   
             System.setProperty("flatlaf.useWindowDecorations", "true");
 
             
             FlatDarkLaf.setup();
         } catch (Exception ex) {
             System.err.println("Failed to initialize FlatLaf Dark theme: " + ex.getMessage());
-        }
-
-        // Launch your main GUI form
+        }     
         java.awt.EventQueue.invokeLater(() -> {
             StudentsForm a = new StudentsForm();
             a.setVisible(true);
-            a.showRecords();   
-          
-        });
+            a.showRecords();            
+        });  
+    }
+    public void currentDB(){
         
     }
+    
     public boolean DBConnect(){
  
        try{
