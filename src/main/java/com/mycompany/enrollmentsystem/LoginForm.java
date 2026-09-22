@@ -4,6 +4,8 @@
  */
 package com.mycompany.enrollmentsystem;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author RyanP
@@ -31,9 +33,9 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        UsernameTexfield = new javax.swing.JTextField();
         dbcmbox = new javax.swing.JComboBox<>();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        PasswordTextField = new javax.swing.JPasswordField();
         loginBtn = new javax.swing.JButton();
         submitBtn = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
@@ -44,16 +46,17 @@ public class LoginForm extends javax.swing.JFrame {
 
         jLabel2.setText("WELCOME!");
 
-        jTextField1.setText("USERNAME");
+        UsernameTexfield.setText("USERNAME");
 
         dbcmbox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jPasswordField1.setText("jPasswordField1");
+        PasswordTextField.setText("jPasswordField1");
 
         loginBtn.setText("LOGIN");
         loginBtn.addActionListener(this::loginBtnActionPerformed);
 
         submitBtn.setText("Submit");
+        submitBtn.addActionListener(this::submitBtnActionPerformed);
 
         jLabel3.setText("Databases");
 
@@ -62,40 +65,39 @@ public class LoginForm extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(29, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(35, 35, 35))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(UsernameTexfield, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(PasswordTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(59, 59, 59))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(loginBtn)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(submitBtn))
-                            .addComponent(dbcmbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(41, 41, 41))))
+                            .addGap(79, 79, 79))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(dbcmbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(submitBtn)
+                            .addContainerGap(15, Short.MAX_VALUE)))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(UsernameTexfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
+                .addComponent(PasswordTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(loginBtn)
-                .addGap(24, 24, 24)
+                .addGap(21, 21, 21)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
                     .addComponent(dbcmbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(submitBtn)
-                .addContainerGap(12, Short.MAX_VALUE))
+                    .addComponent(submitBtn))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -113,7 +115,7 @@ public class LoginForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(43, 43, 43)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -124,35 +126,61 @@ public class LoginForm extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void messagebox(String msg, String titlebar){
+     JOptionPane.showMessageDialog(null,msg,titlebar,JOptionPane.INFORMATION_MESSAGE);   
+     } 
+    
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-//        a.currentDB(information_schema);
-//        String pswd = new String(upswd.getPassword());
-//        a.currentUser(uname.getText(),pswd);
-//        if(!a.DBConnect()){
-//            messagebox("access denied", "ERROR");   
-//        }else{
-//            try{
-//                dbcmbox.removeAllItems();
-//                String query = "SHOW DATABASES;";
-//                a.rs= a.st.executeQuery(query);
-//                    while(a.rs.next()){
-//                        String dbname = a.rs.getString("Database");
-//                        if(dbname.matches(".*\\d(4}$")){
-//                        dbcmbox.addItem(dbname);
-//                        }
-//                    }
-//            }catch (Exception ex){
-//                System.out.println("Cannot Connect"+ ex);
-//            }
-//        }
-      
+        String user = UsernameTexfield.getText();
+        String pass = new String(PasswordTextField.getPassword());
+        
+        if (user.equals("root") && pass.equals("root")) {
+            if(!a.DBConnect()){
+                messagebox("Database connection failed", "ERROR");   
+            } else {
+                try{
+                    dbcmbox.removeAllItems();
+                    String query = "SHOW DATABASES;";
+                    a.rs = a.st.executeQuery(query);
+                    
+                    boolean foundDatabase = false;
+                    while(a.rs.next()){
+                        String dbname = a.rs.getString("Database");
+                        System.out.println("Found database in MySQL: " + dbname); // Check your console output!
+                        
+                        // Matches databases ending in 4 digits (e.g., your school years)
+                        if(dbname.matches(".*\\d{4}$")){
+                            dbcmbox.addItem(dbname);
+                            foundDatabase = true;
+                        }
+                    }
+                    
+                    if (!foundDatabase) {
+                        messagebox("Connected! But no school year databases found ending in 4 digits. Please create one.", "Notice");
+                    } else {
+                        messagebox("Admin Login Successful!", "Success");
+                    }
+                } catch (Exception ex){
+                    System.out.println("Cannot fetch databases: " + ex);
+                }
+            }
+        } else {
+            messagebox("Invalid Admin Username or Password", "ERROR");
+        }
     }//GEN-LAST:event_loginBtnActionPerformed
+
+    private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
+        String mydb = String.valueOf(dbcmbox.getSelectedItem());
+        a.currentDB(mydb);
+        StudentsForm b = new StudentsForm();
+        b.setVisible(true);
+    }//GEN-LAST:event_submitBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -180,13 +208,13 @@ public class LoginForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPasswordField PasswordTextField;
+    private javax.swing.JTextField UsernameTexfield;
     private javax.swing.JComboBox<String> dbcmbox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JButton loginBtn;
     private javax.swing.JButton submitBtn;
     // End of variables declaration//GEN-END:variables

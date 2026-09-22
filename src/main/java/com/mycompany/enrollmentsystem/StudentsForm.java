@@ -107,9 +107,9 @@ String syrlvl;
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
+        FirstSem = new javax.swing.JMenuItem();
+        SecondSem = new javax.swing.JMenuItem();
+        Summer = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -364,16 +364,17 @@ String syrlvl;
 
         jMenu2.setText("Database");
 
-        jMenuItem3.setText("1st Semester");
-        jMenuItem3.addActionListener(this::jMenuItem3ActionPerformed);
-        jMenu2.add(jMenuItem3);
+        FirstSem.setText("1st Semester");
+        FirstSem.addActionListener(this::FirstSemActionPerformed);
+        jMenu2.add(FirstSem);
 
-        jMenuItem4.setText("2nd Semester");
-        jMenu2.add(jMenuItem4);
+        SecondSem.setText("2nd Semester");
+        SecondSem.addActionListener(this::SecondSemActionPerformed);
+        jMenu2.add(SecondSem);
 
-        jMenuItem5.setText("Summer");
-        jMenuItem5.addActionListener(this::jMenuItem5ActionPerformed);
-        jMenu2.add(jMenuItem5);
+        Summer.setText("Summer");
+        Summer.addActionListener(this::SummerActionPerformed);
+        jMenu2.add(Summer);
 
         jMenuBar1.add(jMenu2);
 
@@ -645,13 +646,20 @@ String syrlvl;
        
     }//GEN-LAST:event_EnrollbtnMouseClicked
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    private void FirstSemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FirstSemActionPerformed
+        EnrollmentSystem a = new EnrollmentSystem();
+        messagebox("Created"+a.newdb("1st"),"Success!");
+    }//GEN-LAST:event_FirstSemActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
+    private void SummerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SummerActionPerformed
+        EnrollmentSystem a = new EnrollmentSystem();
+        messagebox("Created"+a.newdb("2nd"),"Success!!");
+    }//GEN-LAST:event_SummerActionPerformed
+
+    private void SecondSemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SecondSemActionPerformed
+        EnrollmentSystem a = new EnrollmentSystem();
+        messagebox("Created"+a.newdb("Summer"),"Success!!!");
+    }//GEN-LAST:event_SecondSemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -682,6 +690,9 @@ String syrlvl;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton DropBtn;
     private javax.swing.JButton Enrollbtn;
+    private javax.swing.JMenuItem FirstSem;
+    private javax.swing.JMenuItem SecondSem;
+    private javax.swing.JMenuItem Summer;
     private javax.swing.JButton deleteBtn;
     private javax.swing.JButton editBtn;
     private javax.swing.JTable enrollTable;
@@ -698,9 +709,6 @@ String syrlvl;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
