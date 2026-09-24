@@ -17,7 +17,7 @@ public class Assign extends EnrollmentSystem {
     public String assignTchr(int teachid) {
         DBConnect();
 
-        // Directly insert TID and SubjID since SubjID is the primary key
+           // Directly insert TID and SubjID since SubjID is the primary key
         String query = "INSERT INTO assign(TID, SubjID) VALUES(" + teachid + ", " + subjid + ")";
 
         try {

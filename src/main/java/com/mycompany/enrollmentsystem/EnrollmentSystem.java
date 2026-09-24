@@ -24,7 +24,7 @@ public class EnrollmentSystem {
         String schyear = "SY" + year + "_" + (year + 1);
             
         try{
-            String query = "CREATE DATABASE IF NOT EXISTS " + term + "_" + schyear;
+            String query = "CREATE DATABASE IF NOT EXIST" + term + "_" + schyear;
             st.executeUpdate(query);
             String query2 = "USE " + term + "_" + schyear;
             st.executeUpdate(query2);
@@ -38,7 +38,7 @@ public class EnrollmentSystem {
                                 studgender VARCHAR(20) NULL,
                                 studyrlvl VARCHAR(20) NULL,
                                 PRIMARY KEY (studid));
-                            """;
+                                """;
             st.executeUpdate(query3);
             String query4 = """
                             CREATE TABLE IF NOT EXISTS subjects (
