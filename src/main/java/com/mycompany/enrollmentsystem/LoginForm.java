@@ -4,6 +4,7 @@
  */
 package com.mycompany.enrollmentsystem;
 
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -17,6 +18,8 @@ public class LoginForm extends javax.swing.JFrame {
     /**
      * Creates new form LoginForm
      */
+    private String authenticatedUser = "";
+    private String authenticatedPass = "";
     public LoginForm() {
         initComponents();
     }
@@ -134,49 +137,77 @@ public class LoginForm extends javax.swing.JFrame {
      } 
     
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        String user = UsernameTexfield.getText();
-        String pass = new String(PasswordTextField.getPassword());
+        String username = UsernameTexfield.getText().trim();
+    String password = new String(PasswordTextField.getPassword()).trim();
+
+    EnrollmentSystem sys = new EnrollmentSystem();
+    
+    // Connect with an empty database string "" to just verify credentials
+    if (sys.DBConnect(username, password, "")) {
+        // Save credentials globally using your existing variables
+        EnrollmentSystem.currentUser = username;
+        EnrollmentSystem.currentPassword = password;
         
-        if (user.equals("root") && pass.equals("root")) {
-            if(!a.DBConnect()){
-                messagebox("Database connection failed", "ERROR");   
-            } else {
-                try{
-                    dbcmbox.removeAllItems();
-                    String query = "SHOW DATABASES;";
-                    a.rs = a.st.executeQuery(query);
-                    
-                    boolean foundDatabase = false;
-                    while(a.rs.next()){
-                        String dbname = a.rs.getString("Database");
-                        System.out.println("Found database in MySQL: " + dbname); // Check your console output!
-                        
-                        // Matches databases ending in 4 digits (e.g., your school years)
-                        if(dbname.matches(".*\\d{4}$")){
-                            dbcmbox.addItem(dbname);
-                            foundDatabase = true;
-                        }
-                    }
-                    
-                    if (!foundDatabase) {
-                        messagebox("Connected! But no school year databases found ending in 4 digits. Please create one.", "Notice");
-                    } else {
-                        messagebox("Admin Login Successful!", "Success");
-                    }
-                } catch (Exception ex){
-                    System.out.println("Cannot fetch databases: " + ex);
-                }
+        JOptionPane.showMessageDialog(this, "Login Success! Please select a semester database and click Submit.", "Authentication Successful", JOptionPane.INFORMATION_MESSAGE);
+        
+        // Clear and populate the combo box using your built-in method
+        dbcmbox.removeAllItems();
+        List<String> databases = EnrollmentSystem.getDatabases();
+        
+        boolean hasDatabases = false;
+        for (String dbName : databases) {
+            // Filter to only show your semester databases (e.g., 1st_SY2026_2027)
+            if (dbName.contains("_SY")) {
+                dbcmbox.addItem(dbName);
+                hasDatabases = true;
             }
-        } else {
-            messagebox("Invalid Admin Username or Password", "ERROR");
         }
+        
+        if (!hasDatabases) {
+            dbcmbox.addItem("No semester databases available");
+        }
+        
+    } else {
+        JOptionPane.showMessageDialog(this, "Invalid Username or Password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
-        String mydb = String.valueOf(dbcmbox.getSelectedItem());
-        a.currentDB(mydb);
-        StudentsForm b = new StudentsForm();
-        b.setVisible(true);
+        String selectedDb = String.valueOf(dbcmbox.getSelectedItem());
+    
+    // 1. Check if user has logged in first
+    if (EnrollmentSystem.currentUser == null || EnrollmentSystem.currentUser.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please login first!", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    // 2. Check if a valid database is selected
+    if (selectedDb == null || selectedDb.equals("Databases") || selectedDb.equals("No semester databases available")) {
+        JOptionPane.showMessageDialog(this, "Please select a valid semester database.", "Error", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    EnrollmentSystem sys = new EnrollmentSystem();
+    
+    // 3. Set the global database variable so StudentsForm knows which one to use
+    sys.currentDB(selectedDb);
+    
+    // 4. Establish the connection to the selected database using the saved credentials
+    if (sys.DBConnect(EnrollmentSystem.currentUser, EnrollmentSystem.currentPassword, selectedDb)) {
+        
+        // 5. Open StudentsForm on the selected database
+        StudentsForm studentForm = new StudentsForm();
+        studentForm.setVisible(true);
+        
+        // Note: If StudentsForm has a method to refresh the table/records, call it here:
+        // studentForm.showRecords(); 
+        
+        // 6. Close the login window
+        this.dispose(); 
+        
+    } else {
+        JOptionPane.showMessageDialog(this, "Access Denied to database: " + selectedDb, "Database Error", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_submitBtnActionPerformed
 
     private void dbcmboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dbcmboxActionPerformed
