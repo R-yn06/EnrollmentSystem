@@ -61,9 +61,11 @@ String syrlvl;
     public StudentsForm(SubjectsForm parentForm) {
         initComponents();
         this.parentForm = parentForm;
+        showRecords();
     }
     public StudentsForm() {
         initComponents();
+        showRecords();
            }
 
     /**

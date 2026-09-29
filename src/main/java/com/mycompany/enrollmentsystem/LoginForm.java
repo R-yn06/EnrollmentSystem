@@ -138,38 +138,47 @@ public class LoginForm extends javax.swing.JFrame {
     
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         String username = UsernameTexfield.getText().trim();
-    String password = new String(PasswordTextField.getPassword()).trim();
+        String password = new String(PasswordTextField.getPassword()).trim();
 
-    EnrollmentSystem sys = new EnrollmentSystem();
-    
-    // Connect with an empty database string "" to just verify credentials
-    if (sys.DBConnect(username, password, "")) {
-        // Save credentials globally using your existing variables
-        EnrollmentSystem.currentUser = username;
-        EnrollmentSystem.currentPassword = password;
+        EnrollmentSystem sys = new EnrollmentSystem();
         
-        JOptionPane.showMessageDialog(this, "Login Success! Please select a semester database and click Submit.", "Authentication Successful", JOptionPane.INFORMATION_MESSAGE);
-        
-        // Clear and populate the combo box using your built-in method
-        dbcmbox.removeAllItems();
-        List<String> databases = EnrollmentSystem.getDatabases();
-        
-        boolean hasDatabases = false;
-        for (String dbName : databases) {
-            // Filter to only show your semester databases (e.g., 1st_SY2026_2027)
-            if (dbName.contains("_SY")) {
-                dbcmbox.addItem(dbName);
-                hasDatabases = true;
+        // Connect with an empty database string "" to just verify credentials
+        if (sys.DBConnect(username, password, "")) {
+            // Save credentials globally using your existing variables
+            EnrollmentSystem.currentUser = username;
+            EnrollmentSystem.currentPassword = password;
+            
+            JOptionPane.showMessageDialog(this, "Login Success! Please select a semester database and click Submit.", "Authentication Successful", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Clear the combo box
+            dbcmbox.removeAllItems();
+            boolean hasDatabases = false;
+            
+            // Query ONLY the databases this specific logged-in user has privileges for
+            try {
+                // sys.st is the Statement created by the DBConnect method for this user
+                java.sql.ResultSet rs = sys.st.executeQuery("SHOW DATABASES");
+                
+                while (rs.next()) {
+                    String dbName = rs.getString(1);
+                    
+                    // Filter to only show your semester databases (e.g., 1st_SY2026_2027)
+                    if (dbName.contains("_SY")) {
+                        dbcmbox.addItem(dbName);
+                        hasDatabases = true;
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Error fetching user databases: " + e.getMessage());
             }
+            
+            if (!hasDatabases) {
+                dbcmbox.addItem("No semester databases available");
+            }
+            
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid Username or Password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
         }
-        
-        if (!hasDatabases) {
-            dbcmbox.addItem("No semester databases available");
-        }
-        
-    } else {
-        JOptionPane.showMessageDialog(this, "Invalid Username or Password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
-    }
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed

@@ -1,5 +1,7 @@
 package com.mycompany.enrollmentsystem;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,35 +49,43 @@ public class Students {
             int rows = pstmt.executeUpdate();
 
             if (rows > 0) {
-                System.out.println("Student inserted successfully!");
-
                 // Retrieve the generated student ID
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     int newid = generatedKeys.getInt(1);
                     
-                    // Sanitize student name (remove spaces) for MySQL username
-                    String cleanName = studname.replaceAll("\\s+", "");
-                    String username = newid + cleanName;
+                    // Sanitize student name (remove spaces and make lowercase) for MySQL username
+                    // E.g., "Ryan P" becomes "ryanp"
+                    String cleanName = studname.replaceAll("\\s+", "").toLowerCase();
+                    String username = newid + cleanName; // e.g., 1000ryanp
+                    String password = cleanName;         // e.g., ryanp
                     String dbName = EnrollmentSystem.db;
 
-                    // SQL 1: Create MySQL user
-                    String query1 = "CREATE USER IF NOT EXISTS '" + username + "'@'localhost' IDENTIFIED BY '" + cleanName + "'";
-                    
-                    // SQL 2: Grant SELECT permission on active database
-                    String query2 = "GRANT SELECT ON `" + dbName + "`.* TO '" + username + "'@'localhost'";
-                    
-                    // Execute user creation and grant commands
-                    b.st.executeUpdate(query1);
-                    b.st.executeUpdate(query2);
-                    b.st.executeUpdate("FLUSH PRIVILEGES");
+                    // Connect briefly as root to create the user, since normal users/teachers cannot create users
+                    try (Connection rootCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/?zeroDateTimeBehavior=CONVERT_TO_NULL", "root", "root");
+                         Statement rootSt = rootCon.createStatement()) {
+                        
+                        // SQL 1: Create MySQL user
+                        String query1 = "CREATE USER IF NOT EXISTS '" + username + "'@'localhost' IDENTIFIED BY '" + password + "'";
+                        
+                        // SQL 2: Grant SELECT permission (view-only) on active database
+                        String query2 = "GRANT SELECT ON `" + dbName + "`.* TO '" + username + "'@'localhost'";
+                        
+                        // Execute user creation and grant commands
+                        rootSt.executeUpdate(query1);
+                        rootSt.executeUpdate(query2);
+                        rootSt.executeUpdate("FLUSH PRIVILEGES");
 
-                    System.out.println("User '" + username + "' created and granted SELECT access on database `" + dbName + "`.");
+                        System.out.println("Student inserted successfully!");
+                        System.out.println("User '" + username + "' created and granted SELECT access on database `" + dbName + "`.");
+                    } catch (SQLException rootEx) {
+                        System.err.println("Student added to table, but failed to create MySQL user account: " + rootEx.getMessage());
+                    }
                 }
             }
 
         } catch (Exception ex) {
-            System.out.println("Failed to add student or create user!");
+            System.out.println("Failed to add student!");
             ex.printStackTrace();
         }
     }

@@ -530,21 +530,31 @@ public void showRecords(){
     }//GEN-LAST:event_saveBtn2ActionPerformed
 
     private void editBtn2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editBtn2MouseClicked
-
         Teachers c = new Teachers();
 
-        if ("".equals(tid.getText()) )
-        messagebox("Select a Teacher to Update first:","Update");
-        else
-        c.update_Teacher(
-            tname.getText(),
-            tdept.getText(),
-            tadd.getText(),           
-            tcontact.getText(),           
-            tstatus.getText()
-                   );
-        showRecords();
+            if ("".equals(tid.getText())) {
+                messagebox("Select a Teacher to Update first:", "Update");
+            } else {
+                try {
+                    // Parse the Teacher ID from the text field
+                    int teacherId = Integer.parseInt(tid.getText());
 
+                    // Pass all 6 arguments, starting with the ID
+                    c.update_Teacher(
+                        teacherId,
+                        tname.getText(),
+                        tdept.getText(),
+                        tadd.getText(),            
+                        tcontact.getText(),            
+                        tstatus.getText()
+                    );
+
+                    showRecords();
+
+                } catch (NumberFormatException e) {
+                    messagebox("Invalid Teacher ID selected.", "Error");
+                }
+            }       
     }//GEN-LAST:event_editBtn2MouseClicked
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
