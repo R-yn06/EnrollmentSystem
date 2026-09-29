@@ -92,11 +92,43 @@ public class Teachers {
         EnrollmentSystem b = new EnrollmentSystem();
         if (!b.DBConnect()) return;
 
-        String query = "DELETE FROM teachers WHERE tid = " + tid;
         try {
+            
+            String fetchNameQuery = "SELECT tname FROM teachers WHERE tid = " + tid;
+            ResultSet rs = b.st.executeQuery(fetchNameQuery);
+            
+            String tname = "";
+            if (rs.next()) {
+                tname = rs.getString("tname");
+            }
+            
+           
+            String query = "DELETE FROM teachers WHERE tid = " + tid;
             int rows = b.st.executeUpdate(query);
+            
             if (rows > 0) {
-                System.out.println("Teacher deleted successfully!");
+                System.out.println("Teacher deleted successfully from table!");
+                
+               
+                if (!tname.isEmpty()) {
+                    String cleanName = tname.replaceAll("\\s+", "").toLowerCase();
+                    String username = tid + cleanName;
+                    String dbName = EnrollmentSystem.db;
+                    
+                    try (Connection rootCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/?zeroDateTimeBehavior=CONVERT_TO_NULL", "root", "root");
+                         Statement rootSt = rootCon.createStatement()) {
+                        
+                        // Revoke all privileges 
+                        String revokeQuery = "REVOKE ALL PRIVILEGES ON `" + dbName + "`.* FROM '" + username + "'@'localhost'";
+                        
+                        rootSt.executeUpdate(revokeQuery);
+                        rootSt.executeUpdate("FLUSH PRIVILEGES");
+                        
+                        System.out.println("Access revoked for user '" + username + "' on database `" + dbName + "`.");
+                    } catch (SQLException rootEx) {
+                        System.err.println("Teacher deleted from table, but failed to revoke privileges: " + rootEx.getMessage());
+                    }
+                }
             } else {
                 System.out.println("No teacher found with ID: " + tid);
             }
@@ -110,7 +142,7 @@ public class Teachers {
         EnrollmentSystem b = new EnrollmentSystem();
         if (!b.DBConnect()) return;
 
-        // Fixed the missing parameters and placeholders in the UPDATE query
+      
         String query = "UPDATE teachers SET tname = ?, tdept = ?, tadd = ?, tcontact = ?, tstatus = ? WHERE tid = ?";
         try {
             PreparedStatement ps = b.con.prepareStatement(query);

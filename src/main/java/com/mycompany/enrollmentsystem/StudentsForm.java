@@ -639,9 +639,7 @@ String syrlvl;
            messagebox(result, "Success!!");
            showEnroll();
 }
-          /* messagebox("Enroll"+studid,"enroll");
-           a.enrollStud(Integer.parseInt(stdid));
-           */
+
        }else{
            messagebox("Cancel Enroll "+ stdid , "enroll");
        }
@@ -650,19 +648,19 @@ String syrlvl;
 
     private void FirstSemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FirstSemActionPerformed
         EnrollmentSystem a = new EnrollmentSystem();
-        a.newdb("1st");
+        messagebox("Created "+a.newdb("1st"),"Success!!!");
         
 //        messagebox("Created "+a.newdb("1st"),"Success!");
     }//GEN-LAST:event_FirstSemActionPerformed
 
     private void SummerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SummerActionPerformed
         EnrollmentSystem a = new EnrollmentSystem();
-        messagebox("Created "+a.newdb("2nd"),"Success!!");
+        messagebox("Created "+a.newdb("Summer"),"Success!!!");
     }//GEN-LAST:event_SummerActionPerformed
 
     private void SecondSemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SecondSemActionPerformed
         EnrollmentSystem a = new EnrollmentSystem();
-        messagebox("Created "+a.newdb("Summer"),"Success!!!");
+        messagebox("Created "+a.newdb("2nd"),"Success!!!");
     }//GEN-LAST:event_SecondSemActionPerformed
 
     /**

@@ -7,12 +7,12 @@ import java.util.Calendar;
 import java.util.List;
 
 public class EnrollmentSystem {
-    // Global JDBC Objects
+ 
     public static Connection con;
     public static Statement st;
-    public static ResultSet rs; // Restored global ResultSet to fix form crashes
+    public static ResultSet rs; 
     
-    // Global trackers for RBAC, session state, and Semester routing
+    
     public static String currentUser = "";
     public static String currentPassword = "";
     public static String currentRole = "";
@@ -24,7 +24,7 @@ public class EnrollmentSystem {
         currentSemesterDB = dbName;
     }
 
-    // Default connection using active session credentials and target database
+  
     public boolean DBConnect() {
         String targetDB = (db != null && !db.trim().isEmpty()) ? db.trim() : "";
         String user = (currentUser != null && !currentUser.isEmpty()) ? currentUser : "root";
@@ -32,13 +32,13 @@ public class EnrollmentSystem {
         return DBConnect(user, pass, targetDB);
     }
 
-    // Connect using explicit username and password to current target database
+   
     public boolean DBConnect(String username, String password) {
         String targetDB = (db != null && !db.trim().isEmpty() && !db.equalsIgnoreCase("null")) ? db.trim() : "";
         return DBConnect(username, password, targetDB);
     }
 
-    // Direct database connection supporting dynamic semester databases (e.g., 1st_SY2026_2027)
+   
     public boolean DBConnect(String username, String password, String semesterDB) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -50,7 +50,7 @@ public class EnrollmentSystem {
             con = DriverManager.getConnection(url, username, password);
             st = con.createStatement();
             
-            // Save active session context
+           
             currentUser = username;
             currentPassword = password;
             if (!dbParam.isEmpty()) {
@@ -66,7 +66,6 @@ public class EnrollmentSystem {
         }
     }
 
-    // Fetch list of all existing MySQL databases on the local server
     public static List<String> getDatabases() {
         List<String> dbList = new ArrayList<>();
         try {
@@ -90,7 +89,7 @@ public class EnrollmentSystem {
         return dbList;
     }
 
-    // Provision MySQL users restricted strictly to a specific database (e.g., `1st_SY2026_2027`)
+ 
     public boolean createDatabaseUser(String id, String name, String role, String targetDB) {
         String cleanName = name.replaceAll("\\s+", "");
         String newUsername = id + cleanName;
@@ -101,10 +100,9 @@ public class EnrollmentSystem {
                 "jdbc:mysql://localhost:3306/?zeroDateTimeBehavior=CONVERT_TO_NULL", "root", "root");
             Statement rootSt = rootCon.createStatement();
             
-            // Create the MySQL server user
+
             rootSt.executeUpdate("CREATE USER IF NOT EXISTS '" + newUsername + "'@'localhost' IDENTIFIED BY '" + newPassword + "'");
-            
-            // Grant role-based privileges wrapped with backticks for numeric database names
+          
             if (role.equalsIgnoreCase("Student")) {
                 rootSt.executeUpdate("GRANT SELECT ON `" + targetDB + "`.* TO '" + newUsername + "'@'localhost'");
             } else if (role.equalsIgnoreCase("Teacher")) {
@@ -121,7 +119,7 @@ public class EnrollmentSystem {
         }
     }
 
-    // Generates DB name using term ("1st", "2nd", "Summer") -> e.g., 1st_SY2026_2027
+    
     public String newdb(String term) {
         int year = Calendar.getInstance().get(Calendar.YEAR);
         String schyear = "SY" + year + "_" + (year + 1);

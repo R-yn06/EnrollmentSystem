@@ -142,29 +142,33 @@ public class LoginForm extends javax.swing.JFrame {
 
         EnrollmentSystem sys = new EnrollmentSystem();
         
-        // Connect with an empty database string "" to just verify credentials
+ 
         if (sys.DBConnect(username, password, "")) {
-            // Save credentials globally using your existing variables
+         
             EnrollmentSystem.currentUser = username;
             EnrollmentSystem.currentPassword = password;
             
             JOptionPane.showMessageDialog(this, "Login Success! Please select a semester database and click Submit.", "Authentication Successful", JOptionPane.INFORMATION_MESSAGE);
             
-            // Clear the combo box
+         
             dbcmbox.removeAllItems();
             boolean hasDatabases = false;
             
-            // Query ONLY the databases this specific logged-in user has privileges for
+          
             try {
-                // sys.st is the Statement created by the DBConnect method for this user
+             
                 java.sql.ResultSet rs = sys.st.executeQuery("SHOW DATABASES");
                 
                 while (rs.next()) {
                     String dbName = rs.getString(1);
+                    String lowerDbName = dbName.toLowerCase();
                     
-                    // Filter to only show your semester databases (e.g., 1st_SY2026_2027)
-                    if (dbName.contains("_SY")) {
-                        dbcmbox.addItem(dbName);
+                    // Filter
+                    if (lowerDbName.startsWith("1st_sy") || 
+                        lowerDbName.startsWith("2nd_sy") || 
+                        lowerDbName.startsWith("summer_sy")) {
+                        
+                        dbcmbox.addItem(dbName); 
                         hasDatabases = true;
                     }
                 }
@@ -173,7 +177,15 @@ public class LoginForm extends javax.swing.JFrame {
             }
             
             if (!hasDatabases) {
-                dbcmbox.addItem("No semester databases available");
+               
+                JOptionPane.showMessageDialog(this, "No semester databases found. Create a new database.", "No Databases Found", JOptionPane.WARNING_MESSAGE);
+                
+                // Open StudentsForm
+                StudentsForm studentForm = new StudentsForm();
+                studentForm.setVisible(true);
+                
+                // Close 
+                this.dispose(); 
             }
             
         } else {
@@ -184,7 +196,6 @@ public class LoginForm extends javax.swing.JFrame {
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
         String selectedDb = String.valueOf(dbcmbox.getSelectedItem());
     
-    // 1. Check if user has logged in first
     if (EnrollmentSystem.currentUser == null || EnrollmentSystem.currentUser.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Please login first!", "Error", JOptionPane.ERROR_MESSAGE);
         return;
@@ -198,20 +209,16 @@ public class LoginForm extends javax.swing.JFrame {
 
     EnrollmentSystem sys = new EnrollmentSystem();
     
-    // 3. Set the global database variable so StudentsForm knows which one to use
+   
     sys.currentDB(selectedDb);
     
-    // 4. Establish the connection to the selected database using the saved credentials
+   
     if (sys.DBConnect(EnrollmentSystem.currentUser, EnrollmentSystem.currentPassword, selectedDb)) {
         
-        // 5. Open StudentsForm on the selected database
+     
         StudentsForm studentForm = new StudentsForm();
         studentForm.setVisible(true);
         
-        // Note: If StudentsForm has a method to refresh the table/records, call it here:
-        // studentForm.showRecords(); 
-        
-        // 6. Close the login window
         this.dispose(); 
         
     } else {

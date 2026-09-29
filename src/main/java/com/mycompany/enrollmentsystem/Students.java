@@ -37,7 +37,7 @@ public class Students {
                 b.st.executeUpdate("ALTER TABLE students AUTO_INCREMENT = 1000");
             }
 
-            // Insert student using PreparedStatement to safely retrieve auto-generated studid
+          
             String insertQuery = "INSERT INTO students (studname, studadd, studcrs, studgender, studyrlvl) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pstmt = b.con.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, studname);
@@ -49,29 +49,28 @@ public class Students {
             int rows = pstmt.executeUpdate();
 
             if (rows > 0) {
-                // Retrieve the generated student ID
+              
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     int newid = generatedKeys.getInt(1);
                     
-                    // Sanitize student name (remove spaces and make lowercase) for MySQL username
-                    // E.g., "Ryan P" becomes "ryanp"
+                   
                     String cleanName = studname.replaceAll("\\s+", "").toLowerCase();
-                    String username = newid + cleanName; // e.g., 1000ryanp
-                    String password = cleanName;         // e.g., ryanp
+                    String username = newid + cleanName; 
+                    String password = cleanName;       
                     String dbName = EnrollmentSystem.db;
 
-                    // Connect briefly as root to create the user, since normal users/teachers cannot create users
+                   
                     try (Connection rootCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/?zeroDateTimeBehavior=CONVERT_TO_NULL", "root", "root");
                          Statement rootSt = rootCon.createStatement()) {
                         
-                        // SQL 1: Create MySQL user
+                      
                         String query1 = "CREATE USER IF NOT EXISTS '" + username + "'@'localhost' IDENTIFIED BY '" + password + "'";
                         
-                        // SQL 2: Grant SELECT permission (view-only) on active database
+                      
                         String query2 = "GRANT SELECT ON `" + dbName + "`.* TO '" + username + "'@'localhost'";
                         
-                        // Execute user creation and grant commands
+             
                         rootSt.executeUpdate(query1);
                         rootSt.executeUpdate(query2);
                         rootSt.executeUpdate("FLUSH PRIVILEGES");
@@ -90,15 +89,47 @@ public class Students {
         }
     }
 
-    public void delete_student(int studid) {
+     public void delete_student(int studid) {
         EnrollmentSystem b = new EnrollmentSystem();
         if (!b.DBConnect()) return;
 
-        String query = "DELETE FROM students WHERE studid = " + studid;
         try {
+            
+            String fetchNameQuery = "SELECT studname FROM students WHERE studid = " + studid;
+            ResultSet rs = b.st.executeQuery(fetchNameQuery);
+            
+            String studname = "";
+            if (rs.next()) {
+                studname = rs.getString("studname");
+            }
+            
+            
+            String query = "DELETE FROM students WHERE studid = " + studid;
             int rows = b.st.executeUpdate(query);
+            
             if (rows > 0) {
-                System.out.println("Deleted successfully!");
+                System.out.println("Deleted successfully from table!");
+                
+                
+                if (!studname.isEmpty()) {
+                    String cleanName = studname.replaceAll("\\s+", "").toLowerCase();
+                    String username = studid + cleanName;
+                    String dbName = EnrollmentSystem.db;
+                    
+                    try (Connection rootCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/?zeroDateTimeBehavior=CONVERT_TO_NULL", "root", "root");
+                         Statement rootSt = rootCon.createStatement()) {
+                        
+                        // Revoke privileges
+                        String revokeQuery = "REVOKE ALL PRIVILEGES ON `" + dbName + "`.* FROM '" + username + "'@'localhost'";
+                        
+                        rootSt.executeUpdate(revokeQuery);
+                        rootSt.executeUpdate("FLUSH PRIVILEGES");
+                        
+                        System.out.println("Access revoked for user '" + username + "' on database `" + dbName + "`.");
+                    } catch (SQLException rootEx) {
+                        System.err.println("Student deleted from table, but failed to revoke privileges: " + rootEx.getMessage());
+                    }
+                }
             } else {
                 System.out.println("No student found with ID: " + studid);
             }
