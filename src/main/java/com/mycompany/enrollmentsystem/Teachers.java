@@ -59,17 +59,15 @@ public class Teachers {
                     String password = cleanName;         
                     String dbName = EnrollmentSystem.db;
 
-                    // Connect briefly as root to create the user and grant specific privileges
                     try (Connection rootCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/?zeroDateTimeBehavior=CONVERT_TO_NULL", "root", "root");
                          Statement rootSt = rootCon.createStatement()) {
                         
-                        // SQL 1: Create MySQL user
                         String query1 = "CREATE USER IF NOT EXISTS '" + username + "'@'localhost' IDENTIFIED BY '" + password + "'";
                         
-                        // SQL 2: Grant SELECT, INSERT, UPDATE permissions (No DELETE) on active database
+                      
                         String query2 = "GRANT SELECT, INSERT, UPDATE ON `" + dbName + "`.* TO '" + username + "'@'localhost'";
                         
-                        // Execute user creation and grant commands
+
                         rootSt.executeUpdate(query1);
                         rootSt.executeUpdate(query2);
                         rootSt.executeUpdate("FLUSH PRIVILEGES");
