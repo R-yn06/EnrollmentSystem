@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.enrollmentsystem;
-
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -15,9 +17,7 @@ public class LoginForm extends javax.swing.JFrame {
     EnrollmentSystem a = new EnrollmentSystem();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginForm.class.getName());
 
-    /**
-     * Creates new form LoginForm
-     */
+   
     private String authenticatedUser = "";
     private String authenticatedPass = "";
     public LoginForm() {
@@ -200,37 +200,92 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
-        String selectedDb = String.valueOf(dbcmbox.getSelectedItem());
-    
+     String selectedDb = String.valueOf(dbcmbox.getSelectedItem());
+
     if (EnrollmentSystem.currentUser == null || EnrollmentSystem.currentUser.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Please login first!", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
-    
-    // 2. Check if a valid database is selected
-    if (selectedDb == null || selectedDb.equals("Databases") || selectedDb.equals("No semester databases available")) {
+
+    if (selectedDb == null || selectedDb.equals("Databases")) {
         JOptionPane.showMessageDialog(this, "Please select a valid semester database.", "Error", JOptionPane.WARNING_MESSAGE);
         return;
     }
 
     EnrollmentSystem sys = new EnrollmentSystem();
-    
-   
     sys.currentDB(selectedDb);
-    
-   
+
     if (sys.DBConnect(EnrollmentSystem.currentUser, EnrollmentSystem.currentPassword, selectedDb)) {
         
-     
-        StudentsForm studentForm = new StudentsForm();
-        studentForm.setVisible(true);
-        
-        this.dispose(); 
-        
+        if (isTeacherUser()) {
+            String tid = fetchTeacherID(EnrollmentSystem.currentUser);
+            GradesForm gradesForm = new GradesForm(tid);
+            gradesForm.setVisible(true);
+            this.dispose();
+        } else {
+            StudentsForm studentForm = new StudentsForm();
+            studentForm.setVisible(true);
+            this.dispose();
+        }
+
     } else {
         JOptionPane.showMessageDialog(this, "Access Denied to database: " + selectedDb, "Database Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_submitBtnActionPerformed
+
+    
+ private boolean isTeacherUser() {
+    try {
+        Statement stmt = EnrollmentSystem.st;
+        ResultSet rs = stmt.executeQuery("SHOW GRANTS FOR CURRENT_USER()");
+        
+        boolean hasSelect = false;
+        boolean hasInsert = false;
+        boolean hasUpdate = false;
+        boolean hasAdminPrivileges = false;
+
+        while (rs.next()) {
+            String grant = rs.getString(1).toUpperCase();
+            if (grant.contains("ALL PRIVILEGES") || grant.contains("GRANT OPTION")) {
+                hasAdminPrivileges = true;
+            }
+            if (grant.contains("SELECT")) hasSelect = true;
+            if (grant.contains("INSERT")) hasInsert = true;
+            if (grant.contains("UPDATE")) hasUpdate = true;
+        }
+
+        return (hasSelect && hasInsert && hasUpdate) && !hasAdminPrivileges;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+private String fetchTeacherID(String username) {
+    try {
+        String digits = username.replaceAll("^(\\d+).*", "$1");
+        if (!digits.isEmpty() && digits.matches("\\d+")) {
+            String sql = "SELECT tid FROM teachers WHERE tid = ?";
+            PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(sql);
+            pstmt.setInt(1, Integer.parseInt(digits));
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return String.valueOf(rs.getInt("tid"));
+            }
+        }
+        
+        String sql = "SELECT tid FROM teachers WHERE LOWER(tname) = LOWER(?)";
+        PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(sql);
+        pstmt.setString(1, username);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            return String.valueOf(rs.getInt("tid"));
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return "1";
+}
 
     private void dbcmboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dbcmboxActionPerformed
         // TODO add your handling code here:

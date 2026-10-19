@@ -1,6 +1,9 @@
 package com.mycompany.enrollmentsystem;
 
-
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import com.mycompany.enrollmentsystem.EnrollmentSystem;
 import javax.swing.table.DefaultTableModel;
 
@@ -15,19 +18,32 @@ import javax.swing.table.DefaultTableModel;
  */
 public class GradesForm extends javax.swing.JFrame {
    int teachid;
+   static String currentSubjId = "";
    static String subjid;
    
    Grades a  = new Grades();
    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GradesForm.class.getName());
 
-    /**
-     * Creates new form GradesForm
-     */
     public GradesForm(String tid) {
         initComponents();
+    try {
         teachid = Integer.parseInt(tid);
+    } catch (NumberFormatException e) {
+        teachid = 1;
     }
+
+    setupGradeComboBoxes();
+    showAssign();
+    }
+    
+    private void setupGradeComboBoxes() {
+    String[] gradeOptions = {"", "A", "B", "C", "D", "FD", "1.00", "1.25", "1.50", "1.75", "2.00", "2.25", "2.50", "2.75", "3.00", "5.00", "INC", "DRP"};
+    PrelimCmbBox.setModel(new DefaultComboBoxModel<>(gradeOptions));
+    MidtermsCmbBox.setModel(new DefaultComboBoxModel<>(gradeOptions));
+    PreFinalCmbBox.setModel(new DefaultComboBoxModel<>(gradeOptions));
+    FinalCmbBox.setModel(new DefaultComboBoxModel<>(gradeOptions));
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -92,6 +108,11 @@ public class GradesForm extends javax.swing.JFrame {
                 "Subj ID", "SubjCode", "SubjDesc", "Units", "Schedule", "Students"
             }
         ));
+        AssignedTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AssignedTableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(AssignedTable);
 
         studname.setText("StudName");
@@ -216,55 +237,152 @@ public class GradesForm extends javax.swing.JFrame {
     tblmodel.setRowCount(0);
     EnrollmentSystem b = new EnrollmentSystem();
     b.DBConnect();
-    
-    // Check if the student ID is actually correct
-    System.out.println("--- STARTING SHOW ASSIGN ---");
-    System.out.println("Target Teacher ID (teachid): " + teachid);
-    
+
     try {
-        String query = "select * from subjects where subjid in(select subjid from assign where tid = " + teachid + " )";
-        System.out.println("Query being executed: " + query);
-        
-        b.rs = b.st.executeQuery(query);
-        
-        int rowCount = 0;
-        while (b.rs.next()) {
-            rowCount++;
-            System.out.println("Found subject row " + rowCount + " in database...");
-            
-            
-            String i = b.rs.getString("subjid");
-            String c = b.rs.getString("subjcode");
-            String d = b.rs.getString("subjdesc");
-            int t = b.rs.getInt("subjunits"); 
-            String g = b.rs.getString("subjsched");
-            int f = b.rs.getInt("Students");
-            
-            Object[] items = {i, c, d, t, g, f}; 
+        String query = "SELECT s.subjid, s.subjcode, s.subjdesc, s.subjunits, s.subjsched, COUNT(e.studid) AS Students "
+                     + "FROM subjects s "
+                     + "JOIN assign a ON s.subjid = a.subjid "
+                     + "LEFT JOIN enroll e ON s.subjid = e.subjid "
+                     + "WHERE a.tid = ? "
+                     + "GROUP BY s.subjid, s.subjcode, s.subjdesc, s.subjunits, s.subjsched";
+
+        PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(query);
+        pstmt.setInt(1, teachid);
+        ResultSet rs = pstmt.executeQuery();
+
+        while (rs.next()) {
+            String i = rs.getString("subjid");
+            String c = rs.getString("subjcode");
+            String d = rs.getString("subjdesc");
+            int t = rs.getInt("subjunits");
+            String g = rs.getString("subjsched");
+            int f = rs.getInt("Students");
+
+            Object[] items = {i, c, d, t, g, f};
             tblmodel.addRow(items);
-            System.out.println("Successfully added subject: " + c + " to GUI table.");
         }
-        
-        System.out.println("Total rows fetched and added: " + rowCount);
-        if (rowCount == 0) {
-            System.out.println("WARNING: Database query successful, but returned 0 rows.");
-        }
-        
     } catch (Exception ex) {
-        System.out.println("--- EXCEPTION CAUGHT IN SHOWASSIGN ---");
         ex.printStackTrace();
     }
+}
+
+private void loadEnrolledStudentsAndGrades(String subjid) {
+    DefaultTableModel tblmodel = (DefaultTableModel) GradesTable.getModel();
+    tblmodel.setRowCount(0);
+
+    EnrollmentSystem sys = new EnrollmentSystem();
+    sys.DBConnect();
+
+    try {
+        String query = "SELECT st.studid, st.studname, g.prelim, g.midterm, g.prefinal, g.final "
+                     + "FROM enroll e "
+                     + "INNER JOIN students st ON e.studid = st.studid "
+                     + "LEFT JOIN grades g ON e.eid = g.enroll_eid "
+                     + "WHERE e.subjid = ?";
+
+        PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(query);
+        pstmt.setInt(1, Integer.parseInt(subjid));
+        ResultSet rs = pstmt.executeQuery();
+
+        while (rs.next()) {
+            String id = rs.getString("studid");
+            String name = rs.getString("studname");
+            String prelim = rs.getString("prelim") != null ? rs.getString("prelim") : "";
+            String midterm = rs.getString("midterm") != null ? rs.getString("midterm") : "";
+            String prefinal = rs.getString("prefinal") != null ? rs.getString("prefinal") : "";
+            String fin = rs.getString("final") != null ? rs.getString("final") : "";
+
+            tblmodel.addRow(new Object[]{id, name, prelim, midterm, prefinal, fin});
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
     
     
     private void SaveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveBtnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_SaveBtnActionPerformed
+       String sid = studid.getText().trim();
+    if (sid.isEmpty() || sid.equals("StudID") || currentSubjId.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please select a student from the table first!", "Warning", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
 
+    String prelim = String.valueOf(PrelimCmbBox.getSelectedItem());
+    String midterm = String.valueOf(MidtermsCmbBox.getSelectedItem());
+    String prefinal = String.valueOf(PreFinalCmbBox.getSelectedItem());
+    String fin = String.valueOf(FinalCmbBox.getSelectedItem());
+
+    EnrollmentSystem sys = new EnrollmentSystem();
+    sys.DBConnect();
+
+    try {
+        String getEidSql = "SELECT eid FROM enroll WHERE studid = ? AND subjid = ?";
+        PreparedStatement pstmtEid = EnrollmentSystem.con.prepareStatement(getEidSql);
+        pstmtEid.setInt(1, Integer.parseInt(sid));
+        pstmtEid.setInt(2, Integer.parseInt(currentSubjId));
+        ResultSet rsEid = pstmtEid.executeQuery();
+
+        if (rsEid.next()) {
+            int eid = rsEid.getInt("eid");
+
+            String upsertSql = "INSERT INTO grades (enroll_eid, prelim, midterm, prefinal, final) "
+                             + "VALUES (?, ?, ?, ?, ?) "
+                             + "ON DUPLICATE KEY UPDATE prelim=?, midterm=?, prefinal=?, final=?";
+
+            PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(upsertSql);
+            pstmt.setInt(1, eid);
+            pstmt.setString(2, prelim);
+            pstmt.setString(3, midterm);
+            pstmt.setString(4, prefinal);
+            pstmt.setString(5, fin);
+
+            pstmt.setString(6, prelim);
+            pstmt.setString(7, midterm);
+            pstmt.setString(8, prefinal);
+            pstmt.setString(9, fin);
+
+            pstmt.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Grades updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            loadEnrolledStudentsAndGrades(currentSubjId);
+        } else {
+            JOptionPane.showMessageDialog(this, "Student enrollment record not found!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_SaveBtnActionPerformed
+    private void setComboValue(javax.swing.JComboBox<String> cmb, Object val) {
+    if (val != null && !val.toString().isEmpty()) {
+        cmb.setSelectedItem(val.toString());
+    } else {
+        cmb.setSelectedIndex(0);
+    }
+}
     private void GradesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GradesTableMouseClicked
-        // TODO add your handling code here:
+       int row = GradesTable.getSelectedRow();
+    if (row != -1) {
+        studid.setText(GradesTable.getValueAt(row, 0).toString());
+        studname.setText(GradesTable.getValueAt(row, 1).toString());
+
+        setComboValue(PrelimCmbBox, GradesTable.getValueAt(row, 2));
+        setComboValue(MidtermsCmbBox, GradesTable.getValueAt(row, 3));
+        setComboValue(PreFinalCmbBox, GradesTable.getValueAt(row, 4));
+        setComboValue(FinalCmbBox, GradesTable.getValueAt(row, 5));
+    }
         
     }//GEN-LAST:event_GradesTableMouseClicked
+   
+
+    private void AssignedTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AssignedTableMouseClicked
+        int selectedRow = AssignedTable.getSelectedRow();
+    if (selectedRow != -1) {
+        currentSubjId = AssignedTable.getValueAt(selectedRow, 0).toString();
+        loadEnrolledStudentsAndGrades(currentSubjId);
+    }
+    }//GEN-LAST:event_AssignedTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -285,10 +403,7 @@ public class GradesForm extends javax.swing.JFrame {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-    //  java.awt.EventQueue.invokeLater(() -> new GradesForm().setVisible(true));
+       
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
