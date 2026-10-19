@@ -72,6 +72,10 @@ public class GradesForm extends javax.swing.JFrame {
         PreFinalCmbBox = new javax.swing.JComboBox<>();
         FinalCmbBox = new javax.swing.JComboBox<>();
         SaveBtn = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        Logout = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
@@ -229,6 +233,20 @@ public class GradesForm extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1);
 
+        Logout.setText("Open");
+        Logout.addActionListener(this::LogoutActionPerformed);
+
+        jMenuItem1.setText("Logout");
+        jMenuItem1.addActionListener(this::jMenuItem1ActionPerformed);
+        Logout.add(jMenuItem1);
+
+        jMenuBar1.add(Logout);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -384,6 +402,72 @@ private void loadEnrolledStudentsAndGrades(String subjid) {
     }
     }//GEN-LAST:event_AssignedTableMouseClicked
 
+    private void LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutActionPerformed
+int confirm = JOptionPane.showConfirmDialog(
+        this, 
+        "Are you sure you want to log out?", 
+        "Confirm Logout", 
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE
+    );
+
+    if (confirm == JOptionPane.YES_OPTION) {
+        // 1. Reset user session variables
+        EnrollmentSystem.currentUser = "";
+        EnrollmentSystem.currentPassword = "";
+        EnrollmentSystem.currentRole = "";
+        EnrollmentSystem.currentSemesterDB = "";
+        EnrollmentSystem.db = "";
+
+        // 2. Close active database connection if open
+        try {
+            if (EnrollmentSystem.con != null && !EnrollmentSystem.con.isClosed()) {
+                EnrollmentSystem.con.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 3. Open LoginForm and close GradesForm
+        LoginForm loginForm = new LoginForm();
+        loginForm.setVisible(true);
+        this.dispose();
+    }
+    }//GEN-LAST:event_LogoutActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+int confirm = JOptionPane.showConfirmDialog(
+        this, 
+        "Are you sure you want to log out?", 
+        "Confirm Logout", 
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE
+    );
+
+    if (confirm == JOptionPane.YES_OPTION) {
+        // 1. Reset user session variables
+        EnrollmentSystem.currentUser = "";
+        EnrollmentSystem.currentPassword = "";
+        EnrollmentSystem.currentRole = "";
+        EnrollmentSystem.currentSemesterDB = "";
+        EnrollmentSystem.db = "";
+
+        // 2. Close active database connection if open
+        try {
+            if (EnrollmentSystem.con != null && !EnrollmentSystem.con.isClosed()) {
+                EnrollmentSystem.con.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 3. Open LoginForm and close GradesForm
+        LoginForm loginForm = new LoginForm();
+        loginForm.setVisible(true);
+        this.dispose();
+    }
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -410,6 +494,7 @@ private void loadEnrolledStudentsAndGrades(String subjid) {
     private javax.swing.JTable AssignedTable;
     private javax.swing.JComboBox<String> FinalCmbBox;
     private javax.swing.JTable GradesTable;
+    private javax.swing.JMenu Logout;
     private javax.swing.JComboBox<String> MidtermsCmbBox;
     private javax.swing.JComboBox<String> PreFinalCmbBox;
     private javax.swing.JComboBox<String> PrelimCmbBox;
@@ -419,6 +504,9 @@ private void loadEnrolledStudentsAndGrades(String subjid) {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

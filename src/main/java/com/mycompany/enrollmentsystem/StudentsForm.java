@@ -108,6 +108,7 @@ String syrlvl;
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         FirstSem = new javax.swing.JMenuItem();
         SecondSem = new javax.swing.JMenuItem();
@@ -361,6 +362,10 @@ String syrlvl;
         jMenuItem2.setText("Teachers");
         jMenuItem2.addActionListener(this::jMenuItem2ActionPerformed);
         jMenu1.add(jMenuItem2);
+
+        jMenuItem3.setText("LOGOUT");
+        jMenuItem3.addActionListener(this::jMenuItem3ActionPerformed);
+        jMenu1.add(jMenuItem3);
 
         jMenuBar1.add(jMenu1);
 
@@ -663,6 +668,39 @@ String syrlvl;
         messagebox("Created "+a.newdb("2nd"),"Success!!!");
     }//GEN-LAST:event_SecondSemActionPerformed
 
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+int confirm = JOptionPane.showConfirmDialog(
+        this, 
+        "Are you sure you want to log out?", 
+        "Confirm Logout", 
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE
+    );
+
+    if (confirm == JOptionPane.YES_OPTION) {
+        // 1. Reset user session variables
+        EnrollmentSystem.currentUser = "";
+        EnrollmentSystem.currentPassword = "";
+        EnrollmentSystem.currentRole = "";
+        EnrollmentSystem.currentSemesterDB = "";
+        EnrollmentSystem.db = "";
+
+        // 2. Close active database connection if open
+        try {
+            if (EnrollmentSystem.con != null && !EnrollmentSystem.con.isClosed()) {
+                EnrollmentSystem.con.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 3. Open LoginForm and close GradesForm
+        LoginForm loginForm = new LoginForm();
+        loginForm.setVisible(true);
+        this.dispose();
+    }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -711,6 +749,7 @@ String syrlvl;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
