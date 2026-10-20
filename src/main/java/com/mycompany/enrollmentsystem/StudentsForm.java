@@ -669,36 +669,38 @@ String syrlvl;
     }//GEN-LAST:event_SecondSemActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-int confirm = JOptionPane.showConfirmDialog(
-        this, 
-        "Are you sure you want to log out?", 
-        "Confirm Logout", 
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-    );
+        int confirm = JOptionPane.showConfirmDialog(
+                this, 
+                "Are you sure you want to log out?", 
+                "Confirm Logout", 
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+            );
 
-    if (confirm == JOptionPane.YES_OPTION) {
-        // 1. Reset user session variables
-        EnrollmentSystem.currentUser = "";
-        EnrollmentSystem.currentPassword = "";
-        EnrollmentSystem.currentRole = "";
-        EnrollmentSystem.currentSemesterDB = "";
-        EnrollmentSystem.db = "";
+            if (confirm == JOptionPane.YES_OPTION) {
+               
+                EnrollmentSystem.currentUser = "";
+                EnrollmentSystem.currentPassword = "";
+                EnrollmentSystem.currentRole = "";
+                EnrollmentSystem.currentSemesterDB = "";
+                EnrollmentSystem.db = "";
 
-        // 2. Close active database connection if open
-        try {
-            if (EnrollmentSystem.con != null && !EnrollmentSystem.con.isClosed()) {
-                EnrollmentSystem.con.close();
+                try {
+                    if (EnrollmentSystem.con != null && !EnrollmentSystem.con.isClosed()) {
+                        EnrollmentSystem.con.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                for (java.awt.Window window : java.awt.Window.getWindows()) {
+                    window.dispose();
+              }
+
+
+                LoginForm loginForm = new LoginForm();
+                loginForm.setVisible(true);
+                this.dispose();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // 3. Open LoginForm and close GradesForm
-        LoginForm loginForm = new LoginForm();
-        loginForm.setVisible(true);
-        this.dispose();
-    }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /**

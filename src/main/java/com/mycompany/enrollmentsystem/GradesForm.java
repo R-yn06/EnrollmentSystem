@@ -33,17 +33,11 @@ public class GradesForm extends javax.swing.JFrame {
         teachid = 1;
     }
 
-    setupGradeComboBoxes();
-    showAssign();
+    a.setupGradeComboBoxes(PrelimCmbBox, MidtermsCmbBox, PreFinalCmbBox, FinalCmbBox);
+    a.showAssign(AssignedTable, teachid);
     }
     
-    private void setupGradeComboBoxes() {
-    String[] gradeOptions = {"", "A", "B", "C", "D", "FD", "1.00", "1.25", "1.50", "1.75", "2.00", "2.25", "2.50", "2.75", "3.00", "5.00", "INC", "DRP"};
-    PrelimCmbBox.setModel(new DefaultComboBoxModel<>(gradeOptions));
-    MidtermsCmbBox.setModel(new DefaultComboBoxModel<>(gradeOptions));
-    PreFinalCmbBox.setModel(new DefaultComboBoxModel<>(gradeOptions));
-    FinalCmbBox.setModel(new DefaultComboBoxModel<>(gradeOptions));
-}
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -250,147 +244,33 @@ public class GradesForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void showAssign(){
-    DefaultTableModel tblmodel = (DefaultTableModel) AssignedTable.getModel();
-    tblmodel.setRowCount(0);
-    EnrollmentSystem b = new EnrollmentSystem();
-    b.DBConnect();
-
-    try {
-        String query = "SELECT s.subjid, s.subjcode, s.subjdesc, s.subjunits, s.subjsched, COUNT(e.studid) AS Students "
-                     + "FROM subjects s "
-                     + "JOIN assign a ON s.subjid = a.subjid "
-                     + "LEFT JOIN enroll e ON s.subjid = e.subjid "
-                     + "WHERE a.tid = ? "
-                     + "GROUP BY s.subjid, s.subjcode, s.subjdesc, s.subjunits, s.subjsched";
-
-        PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(query);
-        pstmt.setInt(1, teachid);
-        ResultSet rs = pstmt.executeQuery();
-
-        while (rs.next()) {
-            String i = rs.getString("subjid");
-            String c = rs.getString("subjcode");
-            String d = rs.getString("subjdesc");
-            int t = rs.getInt("subjunits");
-            String g = rs.getString("subjsched");
-            int f = rs.getInt("Students");
-
-            Object[] items = {i, c, d, t, g, f};
-            tblmodel.addRow(items);
-        }
-    } catch (Exception ex) {
-        ex.printStackTrace();
-    }
-}
-
-private void loadEnrolledStudentsAndGrades(String subjid) {
-    DefaultTableModel tblmodel = (DefaultTableModel) GradesTable.getModel();
-    tblmodel.setRowCount(0);
-
-    EnrollmentSystem sys = new EnrollmentSystem();
-    sys.DBConnect();
-
-    try {
-        String query = "SELECT st.studid, st.studname, g.prelim, g.midterm, g.prefinal, g.final "
-                     + "FROM enroll e "
-                     + "INNER JOIN students st ON e.studid = st.studid "
-                     + "LEFT JOIN grades g ON e.eid = g.enroll_eid "
-                     + "WHERE e.subjid = ?";
-
-        PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(query);
-        pstmt.setInt(1, Integer.parseInt(subjid));
-        ResultSet rs = pstmt.executeQuery();
-
-        while (rs.next()) {
-            String id = rs.getString("studid");
-            String name = rs.getString("studname");
-            String prelim = rs.getString("prelim") != null ? rs.getString("prelim") : "";
-            String midterm = rs.getString("midterm") != null ? rs.getString("midterm") : "";
-            String prefinal = rs.getString("prefinal") != null ? rs.getString("prefinal") : "";
-            String fin = rs.getString("final") != null ? rs.getString("final") : "";
-
-            tblmodel.addRow(new Object[]{id, name, prelim, midterm, prefinal, fin});
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
-    
+ 
     
     private void SaveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveBtnActionPerformed
-       String sid = studid.getText().trim();
-    if (sid.isEmpty() || sid.equals("StudID") || currentSubjId.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Please select a student from the table first!", "Warning", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    String prelim = String.valueOf(PrelimCmbBox.getSelectedItem());
-    String midterm = String.valueOf(MidtermsCmbBox.getSelectedItem());
-    String prefinal = String.valueOf(PreFinalCmbBox.getSelectedItem());
-    String fin = String.valueOf(FinalCmbBox.getSelectedItem());
-
-    EnrollmentSystem sys = new EnrollmentSystem();
-    sys.DBConnect();
-
-    try {
-        String getEidSql = "SELECT eid FROM enroll WHERE studid = ? AND subjid = ?";
-        PreparedStatement pstmtEid = EnrollmentSystem.con.prepareStatement(getEidSql);
-        pstmtEid.setInt(1, Integer.parseInt(sid));
-        pstmtEid.setInt(2, Integer.parseInt(currentSubjId));
-        ResultSet rsEid = pstmtEid.executeQuery();
-
-        if (rsEid.next()) {
-            int eid = rsEid.getInt("eid");
-
-            String upsertSql = "INSERT INTO grades (enroll_eid, prelim, midterm, prefinal, final) "
-                             + "VALUES (?, ?, ?, ?, ?) "
-                             + "ON DUPLICATE KEY UPDATE prelim=?, midterm=?, prefinal=?, final=?";
-
-            PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(upsertSql);
-            pstmt.setInt(1, eid);
-            pstmt.setString(2, prelim);
-            pstmt.setString(3, midterm);
-            pstmt.setString(4, prefinal);
-            pstmt.setString(5, fin);
-
-            pstmt.setString(6, prelim);
-            pstmt.setString(7, midterm);
-            pstmt.setString(8, prefinal);
-            pstmt.setString(9, fin);
-
-            pstmt.executeUpdate();
-
-            JOptionPane.showMessageDialog(this, "Grades updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            loadEnrolledStudentsAndGrades(currentSubjId);
-        } else {
-            JOptionPane.showMessageDialog(this, "Student enrollment record not found!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    }
+        a.saveGrades(
+        this, 
+        studid.getText().trim(), 
+        currentSubjId, 
+        String.valueOf(PrelimCmbBox.getSelectedItem()), 
+        String.valueOf(MidtermsCmbBox.getSelectedItem()), 
+        String.valueOf(PreFinalCmbBox.getSelectedItem()), 
+        String.valueOf(FinalCmbBox.getSelectedItem()), 
+        GradesTable
+    );
     }//GEN-LAST:event_SaveBtnActionPerformed
-    private void setComboValue(javax.swing.JComboBox<String> cmb, Object val) {
-    if (val != null && !val.toString().isEmpty()) {
-        cmb.setSelectedItem(val.toString());
-    } else {
-        cmb.setSelectedIndex(0);
-    }
-}
+   
+    
     private void GradesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GradesTableMouseClicked
-       int row = GradesTable.getSelectedRow();
+        int row = GradesTable.getSelectedRow();
     if (row != -1) {
         studid.setText(GradesTable.getValueAt(row, 0).toString());
         studname.setText(GradesTable.getValueAt(row, 1).toString());
 
-        setComboValue(PrelimCmbBox, GradesTable.getValueAt(row, 2));
-        setComboValue(MidtermsCmbBox, GradesTable.getValueAt(row, 3));
-        setComboValue(PreFinalCmbBox, GradesTable.getValueAt(row, 4));
-        setComboValue(FinalCmbBox, GradesTable.getValueAt(row, 5));
+        a.setComboValue(PrelimCmbBox, GradesTable.getValueAt(row, 2));
+        a.setComboValue(MidtermsCmbBox, GradesTable.getValueAt(row, 3));
+        a.setComboValue(PreFinalCmbBox, GradesTable.getValueAt(row, 4));
+        a.setComboValue(FinalCmbBox, GradesTable.getValueAt(row, 5));
     }
-        
     }//GEN-LAST:event_GradesTableMouseClicked
    
 
@@ -398,74 +278,16 @@ private void loadEnrolledStudentsAndGrades(String subjid) {
         int selectedRow = AssignedTable.getSelectedRow();
     if (selectedRow != -1) {
         currentSubjId = AssignedTable.getValueAt(selectedRow, 0).toString();
-        loadEnrolledStudentsAndGrades(currentSubjId);
+        a.loadEnrolledStudentsAndGrades(GradesTable, currentSubjId);
     }
     }//GEN-LAST:event_AssignedTableMouseClicked
 
     private void LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutActionPerformed
-int confirm = JOptionPane.showConfirmDialog(
-        this, 
-        "Are you sure you want to log out?", 
-        "Confirm Logout", 
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-    );
 
-    if (confirm == JOptionPane.YES_OPTION) {
-        // 1. Reset user session variables
-        EnrollmentSystem.currentUser = "";
-        EnrollmentSystem.currentPassword = "";
-        EnrollmentSystem.currentRole = "";
-        EnrollmentSystem.currentSemesterDB = "";
-        EnrollmentSystem.db = "";
-
-        // 2. Close active database connection if open
-        try {
-            if (EnrollmentSystem.con != null && !EnrollmentSystem.con.isClosed()) {
-                EnrollmentSystem.con.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // 3. Open LoginForm and close GradesForm
-        LoginForm loginForm = new LoginForm();
-        loginForm.setVisible(true);
-        this.dispose();
-    }
     }//GEN-LAST:event_LogoutActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-int confirm = JOptionPane.showConfirmDialog(
-        this, 
-        "Are you sure you want to log out?", 
-        "Confirm Logout", 
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-    );
-
-    if (confirm == JOptionPane.YES_OPTION) {
-        // 1. Reset user session variables
-        EnrollmentSystem.currentUser = "";
-        EnrollmentSystem.currentPassword = "";
-        EnrollmentSystem.currentRole = "";
-        EnrollmentSystem.currentSemesterDB = "";
-        EnrollmentSystem.db = "";
-
-        // 2. Close active database connection if open
-        try {
-            if (EnrollmentSystem.con != null && !EnrollmentSystem.con.isClosed()) {
-                EnrollmentSystem.con.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // 3. Open LoginForm and close GradesForm
-        LoginForm loginForm = new LoginForm();
-        loginForm.setVisible(true);
-        this.dispose();
-    }
+        a.logout(this);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
