@@ -119,7 +119,7 @@ public class Students {
                     try (Connection rootCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/?zeroDateTimeBehavior=CONVERT_TO_NULL", "root", "root");
                          Statement rootSt = rootCon.createStatement()) {
                         
-                        // Revoke privileges
+                   
                         String revokeQuery = "REVOKE ALL PRIVILEGES ON `" + dbName + "`.* FROM '" + username + "'@'localhost'";
                         
                         rootSt.executeUpdate(revokeQuery);

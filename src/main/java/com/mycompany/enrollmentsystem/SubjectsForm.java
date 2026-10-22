@@ -144,6 +144,7 @@ private void showClassList() {
         jMenu3 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         studTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -365,6 +366,10 @@ private void showClassList() {
         jMenuItem4.addActionListener(this::jMenuItem4ActionPerformed);
         jMenu3.add(jMenuItem4);
 
+        jMenuItem5.setText("Logout");
+        jMenuItem5.addActionListener(this::jMenuItem5ActionPerformed);
+        jMenu3.add(jMenuItem5);
+
         jMenuBar2.add(jMenu3);
 
         jMenu4.setText("Edit");
@@ -543,6 +548,40 @@ private void showClassList() {
         // TODO add your handling code here:
     }//GEN-LAST:event_classListMouseClicked
 
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to log out?",
+            "Confirm Logout",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+
+            EnrollmentSystem.currentUser = "";
+            EnrollmentSystem.currentPassword = "";
+            EnrollmentSystem.currentRole = "";
+            EnrollmentSystem.currentSemesterDB = "";
+            EnrollmentSystem.db = "";
+
+            try {
+                if (EnrollmentSystem.con != null && !EnrollmentSystem.con.isClosed()) {
+                    EnrollmentSystem.con.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (java.awt.Window window : java.awt.Window.getWindows()) {
+                window.dispose();
+            }
+
+            LoginForm loginForm = new LoginForm();
+            loginForm.setVisible(true);
+            this.dispose();
+        }
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -584,6 +623,7 @@ private void showClassList() {
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane2;

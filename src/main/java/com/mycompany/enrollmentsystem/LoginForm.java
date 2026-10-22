@@ -200,7 +200,7 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
-     String selectedDb = String.valueOf(dbcmbox.getSelectedItem());
+    String selectedDb = String.valueOf(dbcmbox.getSelectedItem());
 
     if (EnrollmentSystem.currentUser == null || EnrollmentSystem.currentUser.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Please login first!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -218,11 +218,20 @@ public class LoginForm extends javax.swing.JFrame {
     if (sys.DBConnect(EnrollmentSystem.currentUser, EnrollmentSystem.currentPassword, selectedDb)) {
         
         if (isTeacherUser()) {
+            // Teacher Role -> Open GradesForm
             String tid = fetchTeacherID(EnrollmentSystem.currentUser);
             GradesForm gradesForm = new GradesForm(tid);
             gradesForm.setVisible(true);
             this.dispose();
+
+        } else if (isStudentUser()) {
+            // Student Role (SELECT Only) -> Generate & Open Grade Sheet PDF directly
+            String studId = fetchStudentID(EnrollmentSystem.currentUser);
+            StudentPDF.generateAndOpenPDF(studId, selectedDb);
+            JOptionPane.showMessageDialog(this, "Student Grade Sheet PDF generated and opened successfully!", "Grade Sheet Generated", JOptionPane.INFORMATION_MESSAGE);
+
         } else {
+            // Admin / Root Role -> Open StudentsForm
             StudentsForm studentForm = new StudentsForm();
             studentForm.setVisible(true);
             this.dispose();
@@ -234,59 +243,111 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_submitBtnActionPerformed
 
     
- private boolean isTeacherUser() {
-    try {
-        Statement stmt = EnrollmentSystem.st;
-        ResultSet rs = stmt.executeQuery("SHOW GRANTS FOR CURRENT_USER()");
-        
-        boolean hasSelect = false;
-        boolean hasInsert = false;
-        boolean hasUpdate = false;
-        boolean hasAdminPrivileges = false;
+    private boolean isTeacherUser() {
+       try {
+           Statement stmt = EnrollmentSystem.st;
+           ResultSet rs = stmt.executeQuery("SHOW GRANTS FOR CURRENT_USER()");
 
-        while (rs.next()) {
-            String grant = rs.getString(1).toUpperCase();
-            if (grant.contains("ALL PRIVILEGES") || grant.contains("GRANT OPTION")) {
-                hasAdminPrivileges = true;
-            }
-            if (grant.contains("SELECT")) hasSelect = true;
-            if (grant.contains("INSERT")) hasInsert = true;
-            if (grant.contains("UPDATE")) hasUpdate = true;
-        }
+           boolean hasSelect = false;
+           boolean hasInsert = false;
+           boolean hasUpdate = false;
+           boolean hasAdminPrivileges = false;
 
-        return (hasSelect && hasInsert && hasUpdate) && !hasAdminPrivileges;
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
-    }
-}
+           while (rs.next()) {
+               String grant = rs.getString(1).toUpperCase();
+               if (grant.contains("ALL PRIVILEGES") || grant.contains("GRANT OPTION")) {
+                   hasAdminPrivileges = true;
+               }
+               if (grant.contains("SELECT")) hasSelect = true;
+               if (grant.contains("INSERT")) hasInsert = true;
+               if (grant.contains("UPDATE")) hasUpdate = true;
+           }
 
-private String fetchTeacherID(String username) {
-    try {
-        String digits = username.replaceAll("^(\\d+).*", "$1");
-        if (!digits.isEmpty() && digits.matches("\\d+")) {
-            String sql = "SELECT tid FROM teachers WHERE tid = ?";
-            PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(sql);
-            pstmt.setInt(1, Integer.parseInt(digits));
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return String.valueOf(rs.getInt("tid"));
-            }
-        }
-        
-        String sql = "SELECT tid FROM teachers WHERE LOWER(tname) = LOWER(?)";
-        PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(sql);
-        pstmt.setString(1, username);
-        ResultSet rs = pstmt.executeQuery();
-        if (rs.next()) {
-            return String.valueOf(rs.getInt("tid"));
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return "1";
-}
+           return (hasSelect && hasInsert && hasUpdate) && !hasAdminPrivileges;
+       } catch (Exception e) {
+           e.printStackTrace();
+           return false;
+       }
+   }
 
+   private String fetchTeacherID(String username) {
+       try {
+           String digits = username.replaceAll("^(\\d+).*", "$1");
+           if (!digits.isEmpty() && digits.matches("\\d+")) {
+               String sql = "SELECT tid FROM teachers WHERE tid = ?";
+               PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(sql);
+               pstmt.setInt(1, Integer.parseInt(digits));
+               ResultSet rs = pstmt.executeQuery();
+               if (rs.next()) {
+                   return String.valueOf(rs.getInt("tid"));
+               }
+           }
+
+           String sql = "SELECT tid FROM teachers WHERE LOWER(tname) = LOWER(?)";
+           PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(sql);
+           pstmt.setString(1, username);
+           ResultSet rs = pstmt.executeQuery();
+           if (rs.next()) {
+               return String.valueOf(rs.getInt("tid"));
+           }
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+       return "1";
+   }
+   private boolean isStudentUser() {
+       try {
+           Statement stmt = EnrollmentSystem.st;
+           ResultSet rs = stmt.executeQuery("SHOW GRANTS FOR CURRENT_USER()");
+
+           boolean hasSelect = false;
+           boolean hasInsert = false;
+           boolean hasUpdate = false;
+           boolean hasAdminPrivileges = false;
+
+           while (rs.next()) {
+               String grant = rs.getString(1).toUpperCase();
+               if (grant.contains("ALL PRIVILEGES") || grant.contains("GRANT OPTION")) {
+                   hasAdminPrivileges = true;
+               }
+               if (grant.contains("SELECT")) hasSelect = true;
+               if (grant.contains("INSERT")) hasInsert = true;
+               if (grant.contains("UPDATE")) hasUpdate = true;
+           }
+
+           // Student = SELECT permission ONLY (No INSERT, UPDATE, or ALL PRIVILEGES)
+           return hasSelect && !hasInsert && !hasUpdate && !hasAdminPrivileges;
+       } catch (Exception e) {
+           e.printStackTrace();
+           return false;
+       }
+   }
+
+   private String fetchStudentID(String username) {
+       try {
+           String digits = username.replaceAll("^(\\d+).*", "$1");
+           if (!digits.isEmpty() && digits.matches("\\d+")) {
+               String sql = "SELECT studid FROM students WHERE studid = ?";
+               PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(sql);
+               pstmt.setInt(1, Integer.parseInt(digits));
+               ResultSet rs = pstmt.executeQuery();
+               if (rs.next()) {
+                   return String.valueOf(rs.getInt("studid"));
+               }
+           }
+
+           String sql = "SELECT studid FROM students WHERE LOWER(studname) = LOWER(?)";
+           PreparedStatement pstmt = EnrollmentSystem.con.prepareStatement(sql);
+           pstmt.setString(1, username);
+           ResultSet rs = pstmt.executeQuery();
+           if (rs.next()) {
+               return String.valueOf(rs.getInt("studid"));
+           }
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+       return "1001"; // Fallback default
+   }
     private void dbcmboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dbcmboxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_dbcmboxActionPerformed
