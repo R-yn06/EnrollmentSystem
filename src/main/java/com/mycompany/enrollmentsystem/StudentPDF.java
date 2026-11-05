@@ -15,6 +15,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
@@ -52,19 +53,32 @@ public class StudentPDF {
             headerTable.setWidthPercentage(80f);
             headerTable.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-            PdfPCell cellText = new PdfPCell(new Phrase("International State College \nof The Philippinnes", bfBold12));
+            Image schoolLogo = Image.getInstance(
+                TorPDF.class.getResource("/Seal_of_the_International_State_College_of_the_Philippines.png")
+            );
+
+            schoolLogo.scaleToFit(75f, 75f);
+
+            PdfPCell cellLogo = new PdfPCell(schoolLogo);
+            cellLogo.setBorder(Rectangle.NO_BORDER);
+            cellLogo.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cellLogo.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            PdfPCell cellText = new PdfPCell(
+                new Phrase(
+                    "International State College of The Philippines",
+                    bfBold12
+                )
+            );
+
             cellText.setBorder(Rectangle.NO_BORDER);
             cellText.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cellText.setHorizontalAlignment(Element.ALIGN_LEFT);
-            
-            // Empty cell placeholder for logo alignment
-            PdfPCell cellLogo = new PdfPCell(new Phrase("", bf12));
-            cellLogo.setBorder(Rectangle.NO_BORDER);
 
             headerTable.addCell(cellLogo);
             headerTable.addCell(cellText);
-            doc.add(headerTable);
 
+            doc.add(headerTable);
             doc.add(new Paragraph("\n"));
 
             // 2. Title: Student Grade Sheet
