@@ -102,6 +102,7 @@ private void showClassList() {
      */
     public SubjectsForm() {
         initComponents();
+        UiTheme.apply(this, "Enrollment System | Subjects");
         showRecords();
 
     

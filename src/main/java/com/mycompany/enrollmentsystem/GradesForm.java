@@ -27,6 +27,7 @@ public class GradesForm extends javax.swing.JFrame {
 
     public GradesForm(String tid) {
         initComponents();
+        UiTheme.apply(this, "Enrollment System | Grades");
     try {
         teachid = Integer.parseInt(tid);
     } catch (NumberFormatException e) {

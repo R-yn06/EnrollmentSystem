@@ -56,6 +56,9 @@ public class EnrollmentSystem {
             if (!dbParam.isEmpty()) {
                 currentSemesterDB = dbParam;
                 db = dbParam;
+                if ("root".equalsIgnoreCase(username)) {
+                    createScheduleProcedures();
+                }
             }
             
             System.out.println("Connected to database '" + dbParam + "' as user: " + username);
@@ -65,6 +68,70 @@ public class EnrollmentSystem {
             return false;
         }
     }
+
+    private void createScheduleProcedures() throws SQLException {
+            st.executeUpdate("DROP PROCEDURE IF EXISTS check_student_schedule");
+            st.executeUpdate("""
+                CREATE PROCEDURE check_student_schedule(IN p_studid INT, IN p_subjid INT)
+                BEGIN
+                    DECLARE new_schedule VARCHAR(100);
+                    DECLARE new_days VARCHAR(20);
+                    DECLARE new_start TIME;
+                    DECLARE new_end TIME;
+                    DECLARE conflict_schedule VARCHAR(100);
+
+                    SELECT subjsched INTO new_schedule
+                    FROM subjects WHERE subjid = p_subjid;
+                    SET new_days = SUBSTRING_INDEX(new_schedule, ' ', 1);
+                    SET new_start = STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(new_schedule, ' ', -1), '-', 1), '%H:%i');
+                    SET new_end = STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(new_schedule, ' ', -1), '-', -1), '%H:%i');
+
+                    SELECT MAX(s.subjsched) INTO conflict_schedule
+                    FROM enroll e
+                    INNER JOIN subjects s ON s.subjid = e.subjid
+                    WHERE e.studid = p_studid
+                      AND e.subjid <> p_subjid
+                      AND INSTR(new_days, SUBSTRING_INDEX(s.subjsched, ' ', 1)) > 0
+                      AND new_start < STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(s.subjsched, ' ', -1), '-', -1), '%H:%i')
+                      AND new_end > STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(s.subjsched, ' ', -1), '-', 1), '%H:%i');
+
+                    IF conflict_schedule IS NOT NULL THEN
+                        SELECT conflict_schedule AS conflict_schedule;
+                    END IF;
+                END
+            """);
+
+            st.executeUpdate("DROP PROCEDURE IF EXISTS check_teacher_schedule");
+            st.executeUpdate("""
+                CREATE PROCEDURE check_teacher_schedule(IN p_tid INT, IN p_subjid INT)
+                BEGIN
+                    DECLARE new_schedule VARCHAR(100);
+                    DECLARE new_days VARCHAR(20);
+                    DECLARE new_start TIME;
+                    DECLARE new_end TIME;
+                    DECLARE conflict_schedule VARCHAR(100);
+
+                    SELECT subjsched INTO new_schedule
+                    FROM subjects WHERE subjid = p_subjid;
+                    SET new_days = SUBSTRING_INDEX(new_schedule, ' ', 1);
+                    SET new_start = STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(new_schedule, ' ', -1), '-', 1), '%H:%i');
+                    SET new_end = STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(new_schedule, ' ', -1), '-', -1), '%H:%i');
+
+                    SELECT MAX(s.subjsched) INTO conflict_schedule
+                    FROM assign a
+                    INNER JOIN subjects s ON s.subjid = a.SubjID
+                    WHERE a.TID = p_tid
+                      AND a.SubjID <> p_subjid
+                      AND INSTR(new_days, SUBSTRING_INDEX(s.subjsched, ' ', 1)) > 0
+                      AND new_start < STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(s.subjsched, ' ', -1), '-', -1), '%H:%i')
+                      AND new_end > STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(s.subjsched, ' ', -1), '-', 1), '%H:%i');
+
+                    IF conflict_schedule IS NOT NULL THEN
+                        SELECT conflict_schedule AS conflict_schedule;
+                    END IF;
+                END
+            """);
+        }
 
     public static List<String> getDatabases() {
         List<String> dbList = new ArrayList<>();
@@ -105,9 +172,11 @@ public class EnrollmentSystem {
           
             if (role.equalsIgnoreCase("Student")) {
                 rootSt.executeUpdate("GRANT SELECT ON `" + targetDB + "`.* TO '" + newUsername + "'@'localhost'");
+                rootSt.executeUpdate("GRANT EXECUTE ON `" + targetDB + "`.* TO '" + newUsername + "'@'localhost'");
             } else if (role.equalsIgnoreCase("Teacher")) {
                 rootSt.executeUpdate("GRANT SELECT, INSERT, UPDATE ON `" + targetDB + "`.* TO '" + newUsername + "'@'localhost'");
                 rootSt.executeUpdate("GRANT DELETE ON `" + targetDB + "`.enroll TO '" + newUsername + "'@'localhost'");
+                rootSt.executeUpdate("GRANT EXECUTE ON `" + targetDB + "`.* TO '" + newUsername + "'@'localhost'");
             }
             
             rootSt.executeUpdate("FLUSH PRIVILEGES");
@@ -141,7 +210,8 @@ public class EnrollmentSystem {
                     studcrs VARCHAR(100) NULL,
                     studgender VARCHAR(20) NULL,
                     studyrlvl VARCHAR(20) NULL,
-                    PRIMARY KEY (studid));
+                    PRIMARY KEY (studid))
+                AUTO_INCREMENT = 1000;
             """);
 
             st.executeUpdate("""
@@ -151,7 +221,8 @@ public class EnrollmentSystem {
                     subjdesc VARCHAR(255) NULL DEFAULT NULL,
                     subjunits INT NULL DEFAULT NULL,
                     subjsched VARCHAR(100) NULL,
-                    PRIMARY KEY (subjid));
+                    PRIMARY KEY (subjid))
+                AUTO_INCREMENT = 2000;
             """);
 
             st.executeUpdate("""
@@ -162,7 +233,8 @@ public class EnrollmentSystem {
                     tadd VARCHAR(255) NULL,
                     tcontact VARCHAR(50) NULL,
                     tstatus VARCHAR(50) NULL,
-                    PRIMARY KEY (tid));
+                    PRIMARY KEY (tid))
+                AUTO_INCREMENT = 3000;
             """);
 
             st.executeUpdate("""
@@ -195,6 +267,75 @@ public class EnrollmentSystem {
                     final VARCHAR(10) NULL DEFAULT NULL,
                     PRIMARY KEY (gradeid),
                     FOREIGN KEY (enroll_eid) REFERENCES enroll(eid));
+            """);
+
+            // Keep generated identifiers in their designated ranges for new and existing databases.
+            st.executeUpdate("ALTER TABLE students AUTO_INCREMENT = 1000");
+            st.executeUpdate("ALTER TABLE subjects AUTO_INCREMENT = 2000");
+            st.executeUpdate("ALTER TABLE teachers AUTO_INCREMENT = 3000");
+
+            st.executeUpdate("DROP PROCEDURE IF EXISTS check_student_schedule");
+            st.executeUpdate("""
+                CREATE PROCEDURE check_student_schedule(IN p_studid INT, IN p_subjid INT)
+                BEGIN
+                    DECLARE new_schedule VARCHAR(100);
+                    DECLARE new_days VARCHAR(20);
+                    DECLARE new_start TIME;
+                    DECLARE new_end TIME;
+                    DECLARE conflict_schedule VARCHAR(100);
+
+                    SELECT subjsched INTO new_schedule
+                    FROM subjects WHERE subjid = p_subjid;
+                    SET new_days = SUBSTRING_INDEX(new_schedule, ' ', 1);
+                    SET new_start = STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(new_schedule, ' ', -1), '-', 1), '%H:%i');
+                    SET new_end = STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(new_schedule, ' ', -1), '-', -1), '%H:%i');
+
+                    SELECT MAX(s.subjsched) INTO conflict_schedule
+                    FROM enroll e
+                    INNER JOIN subjects s ON s.subjid = e.subjid
+                    WHERE e.studid = p_studid
+                      AND e.subjid <> p_subjid
+                      AND INSTR(new_days, SUBSTRING_INDEX(s.subjsched, ' ', 1)) > 0
+                      AND new_start < STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(s.subjsched, ' ', -1), '-', -1), '%H:%i')
+                      AND new_end > STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(s.subjsched, ' ', -1), '-', 1), '%H:%i')
+                    LIMIT 1;
+
+                    IF conflict_schedule IS NOT NULL THEN
+                        SELECT conflict_schedule AS conflict_schedule;
+                    END IF;
+                END
+            """);
+
+            st.executeUpdate("DROP PROCEDURE IF EXISTS check_teacher_schedule");
+            st.executeUpdate("""
+                CREATE PROCEDURE check_teacher_schedule(IN p_tid INT, IN p_subjid INT)
+                BEGIN
+                    DECLARE new_schedule VARCHAR(100);
+                    DECLARE new_days VARCHAR(20);
+                    DECLARE new_start TIME;
+                    DECLARE new_end TIME;
+                    DECLARE conflict_schedule VARCHAR(100);
+
+                    SELECT subjsched INTO new_schedule
+                    FROM subjects WHERE subjid = p_subjid;
+                    SET new_days = SUBSTRING_INDEX(new_schedule, ' ', 1);
+                    SET new_start = STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(new_schedule, ' ', -1), '-', 1), '%H:%i');
+                    SET new_end = STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(new_schedule, ' ', -1), '-', -1), '%H:%i');
+
+                    SELECT MAX(s.subjsched) INTO conflict_schedule
+                    FROM assign a
+                    INNER JOIN subjects s ON s.subjid = a.SubjID
+                    WHERE a.TID = p_tid
+                      AND a.SubjID <> p_subjid
+                      AND INSTR(new_days, SUBSTRING_INDEX(s.subjsched, ' ', 1)) > 0
+                      AND new_start < STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(s.subjsched, ' ', -1), '-', -1), '%H:%i')
+                      AND new_end > STR_TO_DATE(SUBSTRING_INDEX(SUBSTRING_INDEX(s.subjsched, ' ', -1), '-', 1), '%H:%i')
+                    LIMIT 1;
+
+                    IF conflict_schedule IS NOT NULL THEN
+                        SELECT conflict_schedule AS conflict_schedule;
+                    END IF;
+                END
             """);
           
             return dbName;
