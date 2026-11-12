@@ -17,14 +17,39 @@ public class Assign extends EnrollmentSystem {
     public String assignTchr(int teachid) {
         DBConnect();
 
-         
-        String query = "INSERT INTO assign(TID, SubjID) VALUES(" + teachid + ", " + subjid + ")";
-
         try {
-            st.executeUpdate(query);
+            try (java.sql.CallableStatement checkSchedule =
+                    con.prepareCall("{CALL check_teacher_schedule(?, ?)}")) {
+                checkSchedule.setInt(1, teachid);
+                checkSchedule.setInt(2, subjid);
+                if (checkSchedule.execute()) {
+                    try (java.sql.ResultSet conflict = checkSchedule.getResultSet()) {
+                        if (conflict.next()) {
+                            return "Conflict with " + conflict.getString("conflict_schedule");
+                        }
+                    }
+                }
+            }
+
+            String query = "INSERT INTO assign(TID, SubJID) VALUES(?, ?)";
+            java.sql.PreparedStatement assignment = con.prepareStatement(query);
+            assignment.setInt(1, teachid);
+            assignment.setInt(2, subjid);
+            assignment.executeUpdate();
+            assignment.close();
             return "Teacher " + teachid + " assigned to subject " + subjid;
         } catch (java.sql.SQLIntegrityConstraintViolationException e) {
             return "This subject is already assigned to a teacher.";
+        } catch (java.sql.SQLException e) {
+            String message = e.getMessage();
+            if (message != null) {
+                int conflictStart = message.indexOf("Conflict with ");
+                if (conflictStart >= 0) {
+                    return message.substring(conflictStart).trim();
+                }
+            }
+            System.out.println("Failed to assign teacher: " + e);
+            return "Assignment Failed";
         } catch (Exception e) {
             System.out.println("Failed to assign teacher: " + e);
             return "Assignment Failed";

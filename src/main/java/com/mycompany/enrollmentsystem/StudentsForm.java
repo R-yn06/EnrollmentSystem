@@ -60,11 +60,13 @@ String syrlvl;
      */
     public StudentsForm(SubjectsForm parentForm) {
         initComponents();
+        UiTheme.apply(this, "Enrollment System | Students");
         this.parentForm = parentForm;
         showRecords();
     }
     public StudentsForm() {
         initComponents();
+        UiTheme.apply(this, "Enrollment System | Students");
         showRecords();
            }
 
@@ -673,7 +675,9 @@ String syrlvl;
            
            String result =a.enrollStud(Integer.parseInt(stdid));
            
-           if (result.equals("Student is already enrolled in this subject.")) {
+           if (result.startsWith("Conflict with ")) {
+           JOptionPane.showMessageDialog(this, result, "Schedule Conflict", JOptionPane.ERROR_MESSAGE);
+           } else if (result.equals("Student is already enrolled in this subject.")) {
            messagebox(result, "Enrollment Failed");
 }          else {
            messagebox(result, "Success!!");

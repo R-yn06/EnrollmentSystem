@@ -21,35 +21,47 @@ public class Enroll extends EnrollmentSystem {
       
     public String enrollStud(int studid){
         DBConnect();
-        int neweid = 0;
-        String query1 = "select max(eid) + 1 as maxId from enroll";
-        try {
-            rs = st.executeQuery(query1);
-            if (rs.next() && rs.getInt("maxId") > 0) {
-                neweid = rs.getInt("maxId");
-            } else {
-                neweid = 1;
+
+        try (java.sql.CallableStatement checkSchedule =
+                con.prepareCall("{CALL check_student_schedule(?, ?)}")) {
+            checkSchedule.setInt(1, studid);
+            checkSchedule.setInt(2, subjid);
+            if (checkSchedule.execute()) {
+                try (java.sql.ResultSet conflict = checkSchedule.getResultSet()) {
+                    if (conflict.next()) {
+                        return "Conflict with " + conflict.getString("conflict_schedule");
+                    }
+                }
             }
-        } catch (Exception e) {
-            System.out.println("Failed to get enrollment ID " + e);
+        } catch (java.sql.SQLException e) {
+            String message = e.getMessage();
+            if (message != null) {
+                int conflictStart = message.indexOf("Conflict with ");
+                if (conflictStart >= 0) {
+                    return message.substring(conflictStart).trim();
+                }
+            }
+            System.out.println("Failed to check student schedule: " + e);
+            return "Enrollment Failed";
         }
 
-        
-        
-        String enrollQuery = "insert into enroll(studid, subjid,evaluation)" + "values('"+studid+"','"+subjid+"',' ')";
         try {
-            st.executeUpdate(enrollQuery);
+            String enrollQuery = "insert into enroll(studid, subjid,evaluation) values(?,?,?)";
+            java.sql.PreparedStatement enrollStatement = con.prepareStatement(enrollQuery);
+            enrollStatement.setInt(1, studid);
+            enrollStatement.setInt(2, subjid);
+            enrollStatement.setString(3, " ");
+            enrollStatement.executeUpdate();
+            enrollStatement.close();
         } catch (java.sql.SQLIntegrityConstraintViolationException e) {
             return "Student is already enrolled in this subject.";
         } catch (Exception e) {
             System.out.println("Failed to insert" + e);
             return "Enrollment Failed";
         }
-        return "Student "+ studid + " enrolled to " + subjid;               
+        return "Student "+ studid + " enrolled to " + subjid;
     }
-    
-    
-    
+
     public String dropSubject(int studid){
         DBConnect();
         
@@ -76,4 +88,3 @@ System.out.println("query = " + query);
     
     
 }
-

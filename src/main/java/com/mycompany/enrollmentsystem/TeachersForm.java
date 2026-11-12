@@ -102,6 +102,7 @@ public void showRecords(){
      */
     public TeachersForm() {
         initComponents();
+        UiTheme.apply(this, "Enrollment System | Teachers");
         showRecords();
     }
 
@@ -602,7 +603,9 @@ public void showRecords(){
         int i = okcancel("Assign Teacher ID:" + teachid + " to subject ID:" +  a.getsubjid());
         if (i == 0) {
             String result = a.assignTchr(Integer.parseInt(teachid));
-            if (result.equals("Teacher is already assigned to this subject.")) {
+            if (result.startsWith("Conflict with ")) {
+                JOptionPane.showMessageDialog(this, result, "Schedule Conflict", JOptionPane.ERROR_MESSAGE);
+            } else if (result.equals("Teacher is already assigned to this subject.")) {
                 messagebox(result, "Assignment Failed");
             } else {
                 messagebox(result, "Success!!");
